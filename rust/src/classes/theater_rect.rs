@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control};
+use godot::classes::{image, Control, ITextureRect, Image, ImageTexture, InputEvent, InputEventKey, InputEventMouse, TextureRect, Viewport};
 
 #[derive(GodotClass)]
 #[class(base = TextureRect)]
@@ -45,6 +45,19 @@ impl ITextureRect for TheaterRect {
                     self.draw_cutout()
                 }
             }
+        }
+    }
+
+    fn input(&mut self, event: Gd<InputEvent>) {
+        match event.try_cast::<InputEventMouse>() {
+            Ok(mouse_event) => {
+                if !self.current_rect.has_point(mouse_event.get_global_position()) {
+                    if let Some(mut viewport) = self.base().get_viewport() {
+                        viewport.set_input_as_handled();
+                    }
+                }
+            },
+            Err(_) => {}
         }
     }
 }

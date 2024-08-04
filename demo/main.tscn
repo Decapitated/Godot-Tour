@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=3 format=3 uid="uid://cvrwxwcki5rf0"]
+
+[ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
@@ -50,6 +52,7 @@ layout_mode = 2
 [node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/CenterContainer"]
 layout_mode = 2
 text = "Click me!"
+script = ExtResource("1_sxr4r")
 
 [node name="TheaterRect" type="TheaterRect" parent="."]
 focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
@@ -62,3 +65,5 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" method="on_click"]
