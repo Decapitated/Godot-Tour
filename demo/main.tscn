@@ -31,10 +31,30 @@ theme_override_constants/margin_bottom = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus blandit placerat est, ut convallis felis pellentesque id. Suspendisse fermentum sapien id sapien mollis, quis sodales ex iaculis. Mauris euismod, elit eget eleifend laoreet, velit libero efficitur ipsum, sit amet aliquam metus risus quis diam. Aenean diam felis, hendrerit et ex id, interdum vestibulum elit. Duis quis posuere metus, in imperdiet nibh. Maecenas varius pharetra mauris ac vulputate. Donec urna tortor, iaculis vitae pellentesque et, ornare at velit. Nulla facilisi. Cras ex ipsum, molestie eget metus non, volutpat molestie velit. Nulla facilisi. Nullam eget auctor urna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Sed feugiat egestas urna, ac ullamcorper neque tincidunt quis. Praesent nec lacinia nulla. Quisque tristique erat nec enim tincidunt pretium. Etiam pellentesque eleifend massa vitae auctor. In hac habitasse platea dictumst. Curabitur tristique dui enim, sit amet fermentum neque lobortis luctus. Fusce sed sem ante.
+
+Pellentesque quis ornare enim. Morbi aliquam vestibulum nisi, ac tempus metus porta non. Duis augue nunc, vehicula a auctor vel, euismod sed justo. In in orci dolor. Mauris quis fringilla elit, nec facilisis tortor. Phasellus ac turpis tempus, vestibulum arcu ac, luctus turpis. In nec massa sed purus dignissim interdum et ut eros. Morbi sagittis eleifend dui commodo iaculis. Pellentesque volutpat, libero sit amet faucibus luctus, lectus turpis gravida sapien, quis facilisis orci nisi at erat. Nulla facilisi. Morbi accumsan, libero et interdum luctus, dui nibh semper elit, eget aliquam sem eros nec libero.
+
+Donec nisl neque, rutrum vitae augue ut, aliquet suscipit ante. Etiam non ligula ante. Mauris convallis sed mi at suscipit. Fusce vitae consectetur nunc. Proin tortor dolor, pulvinar a lorem nec, lobortis laoreet elit. Pellentesque dignissim ligula orci, vitae placerat ligula blandit non. Etiam massa tortor, facilisis non turpis vel, posuere mollis neque.
+
+Nulla ac euismod justo. Sed consectetur nisi et consequat porta. In cursus risus sed est volutpat, at eleifend dolor tristique. Pellentesque id eleifend sapien. Cras at tristique lorem. Sed non est suscipit, tincidunt urna nec, malesuada justo. Vestibulum pretium et turpis vitae luctus. Donec ultricies velit nec turpis pretium efficitur."
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus blandit placerat est, ut convallis felis pellentesque id. Suspendisse fermentum sapien id sapien mollis, quis sodales ex iaculis. Mauris euismod, elit eget eleifend laoreet, velit libero efficitur ipsum, sit amet aliquam metus risus quis diam. Aenean diam felis, hendrerit et ex id, interdum vestibulum elit. Duis quis posuere metus, in imperdiet nibh. Maecenas varius pharetra mauris ac vulputate. Donec urna tortor, iaculis vitae pellentesque et, ornare at velit. Nulla facilisi. Cras ex ipsum, molestie eget metus non, volutpat molestie velit. Nulla facilisi. Nullam eget auctor urna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
 
@@ -55,7 +75,7 @@ text = "Click me!"
 script = ExtResource("1_sxr4r")
 
 [node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "reference_rect")]
-focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
+focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
 reference_rect = NodePath("ReferenceRect")
 dim_color = Color(0, 0, 0, 0.74902)
 layout_mode = 1
