@@ -55,7 +55,7 @@ text = "Click me!"
 script = ExtResource("1_sxr4r")
 
 [node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "reference_rect")]
-focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button")
+focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
 reference_rect = NodePath("ReferenceRect")
 dim_color = Color(0, 0, 0, 0.74902)
 layout_mode = 1
