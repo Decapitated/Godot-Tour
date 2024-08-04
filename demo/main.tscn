@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvrwxwcki5rf0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dhxab")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus blandit placerat est, ut convallis felis pellentesque id. Suspendisse fermentum sapien id sapien mollis, quis sodales ex iaculis. Mauris euismod, elit eget eleifend laoreet, velit libero efficitur ipsum, sit amet aliquam metus risus quis diam. Aenean diam felis, hendrerit et ex id, interdum vestibulum elit. Duis quis posuere metus, in imperdiet nibh. Maecenas varius pharetra mauris ac vulputate. Donec urna tortor, iaculis vitae pellentesque et, ornare at velit. Nulla facilisi. Cras ex ipsum, molestie eget metus non, volutpat molestie velit. Nulla facilisi. Nullam eget auctor urna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Sed feugiat egestas urna, ac ullamcorper neque tincidunt quis. Praesent nec lacinia nulla. Quisque tristique erat nec enim tincidunt pretium. Etiam pellentesque eleifend massa vitae auctor. In hac habitasse platea dictumst. Curabitur tristique dui enim, sit amet fermentum neque lobortis luctus. Fusce sed sem ante.
+
+Pellentesque quis ornare enim. Morbi aliquam vestibulum nisi, ac tempus metus porta non. Duis augue nunc, vehicula a auctor vel, euismod sed justo. In in orci dolor. Mauris quis fringilla elit, nec facilisis tortor. Phasellus ac turpis tempus, vestibulum arcu ac, luctus turpis. In nec massa sed purus dignissim interdum et ut eros. Morbi sagittis eleifend dui commodo iaculis. Pellentesque volutpat, libero sit amet faucibus luctus, lectus turpis gravida sapien, quis facilisis orci nisi at erat. Nulla facilisi. Morbi accumsan, libero et interdum luctus, dui nibh semper elit, eget aliquam sem eros nec libero.
+
+Donec nisl neque, rutrum vitae augue ut, aliquet suscipit ante. Etiam non ligula ante. Mauris convallis sed mi at suscipit. Fusce vitae consectetur nunc. Proin tortor dolor, pulvinar a lorem nec, lobortis laoreet elit. Pellentesque dignissim ligula orci, vitae placerat ligula blandit non. Etiam massa tortor, facilisis non turpis vel, posuere mollis neque.
+
+Nulla ac euismod justo. Sed consectetur nisi et consequat porta. In cursus risus sed est volutpat, at eleifend dolor tristique. Pellentesque id eleifend sapien. Cras at tristique lorem. Sed non est suscipit, tincidunt urna nec, malesuada justo. Vestibulum pretium et turpis vitae luctus. Donec ultricies velit nec turpis pretium efficitur."
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+text = "Click me!"
+
+[node name="TheaterRect" type="TheaterRect" parent="."]
+focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
+dim_color = Color(0, 0, 0, 0.74902)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
