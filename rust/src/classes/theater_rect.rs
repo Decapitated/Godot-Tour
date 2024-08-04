@@ -1,16 +1,14 @@
 use godot::prelude::*;
-use godot::classes::{image, Control, ITextureRect, Image, ImageTexture, InputEvent, InputEventMouse, TextureRect};
+use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control, InputEvent, InputEventMouse, ReferenceRect};
 
 #[derive(GodotClass)]
 #[class(base = TextureRect)]
 struct TheaterRect {
     base: Base<TextureRect>,
-    #[export]
-    focused_node: NodePath,
-    #[export]
-    dim_color: Color,
-    #[export]
-    confine_input: bool,
+    #[export] focused_node: Option<Gd<Control>>,
+    #[export] reference_rect: Option<Gd<ReferenceRect>>,
+    #[export] dim_color: Color,
+    #[export] confine_input: bool,
     cutout_image: Option<Gd<Image>>,
     cutout_texture: Option<Gd<ImageTexture>>,
     current_rect: Rect2,
@@ -23,7 +21,8 @@ impl ITextureRect for TheaterRect {
     fn init(base: Base<TextureRect>) -> Self {
         Self {
             base,
-            focused_node: NodePath::default(),
+            focused_node: None,
+            reference_rect: None,
             dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.333333),
             confine_input: true,
             cutout_image: None,
@@ -39,29 +38,24 @@ impl ITextureRect for TheaterRect {
     }
 
     fn process(&mut self, _delta: f64) {
-        if !self.focused_node.is_empty() {
-            let control_result: Option<Gd<Control>> = self.base().try_get_node_as(self.focused_node.clone());
-            if let Some(focused_control) = control_result {
-                let global_rect = focused_control.get_global_rect();
-                if self.current_rect != global_rect {
-                    self.current_rect = global_rect;
-                    self.draw_cutout()
-                }
+        if let Some(focused_node) = self.focused_node.clone() {
+            let global_rect = focused_node.get_global_rect();
+            if self.current_rect != global_rect {
+                self.current_rect = global_rect;
+                self.draw_cutout();
+                self.update_reference_rect();
             }
         }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
         if self.confine_input {
-            match event.try_cast::<InputEventMouse>() {
-                Ok(mouse_event) => {
-                    if !self.current_rect.has_point(mouse_event.get_global_position()) {
-                        if let Some(mut viewport) = self.base().get_viewport() {
-                            viewport.set_input_as_handled();
-                        }
+            if let Ok(mouse_event) = event.try_cast::<InputEventMouse>() {
+                if !self.current_rect.has_point(mouse_event.get_global_position()) {
+                    if let Some(mut viewport) = self.base().get_viewport() {
+                        viewport.set_input_as_handled();
                     }
-                },
-                Err(_) => {}
+                } 
             }
         }
     }
@@ -89,6 +83,13 @@ impl TheaterRect {
                 image.fill_rect(self.current_rect.cast_int(), CUTOUT_COLOR);
                 texture.update(image.clone());
             }
+        }
+    }
+
+    fn update_reference_rect(&mut self) {
+        if let Some(mut reference_rect) = self.reference_rect.clone() {
+            reference_rect.set_global_position(self.current_rect.position);
+            reference_rect.set_size(self.current_rect.size);
         }
     }
 }
