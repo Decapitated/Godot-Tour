@@ -57,6 +57,7 @@ script = ExtResource("1_sxr4r")
 [node name="TheaterRect" type="TheaterRect" parent="."]
 focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
 dim_color = Color(0, 0, 0, 0.74902)
+confine_input = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

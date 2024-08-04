@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{image, Control, ITextureRect, Image, ImageTexture, InputEvent, InputEventKey, InputEventMouse, TextureRect, Viewport};
+use godot::classes::{image, Control, ITextureRect, Image, ImageTexture, InputEvent, InputEventMouse, TextureRect};
 
 #[derive(GodotClass)]
 #[class(base = TextureRect)]
@@ -9,6 +9,8 @@ struct TheaterRect {
     focused_node: NodePath,
     #[export]
     dim_color: Color,
+    #[export]
+    confine_input: bool,
     cutout_image: Option<Gd<Image>>,
     cutout_texture: Option<Gd<ImageTexture>>,
     current_rect: Rect2,
@@ -23,6 +25,7 @@ impl ITextureRect for TheaterRect {
             base,
             focused_node: NodePath::default(),
             dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.333333),
+            confine_input: true,
             cutout_image: None,
             cutout_texture: None,
             current_rect: Rect2::default(),
@@ -49,15 +52,17 @@ impl ITextureRect for TheaterRect {
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        match event.try_cast::<InputEventMouse>() {
-            Ok(mouse_event) => {
-                if !self.current_rect.has_point(mouse_event.get_global_position()) {
-                    if let Some(mut viewport) = self.base().get_viewport() {
-                        viewport.set_input_as_handled();
+        if self.confine_input {
+            match event.try_cast::<InputEventMouse>() {
+                Ok(mouse_event) => {
+                    if !self.current_rect.has_point(mouse_event.get_global_position()) {
+                        if let Some(mut viewport) = self.base().get_viewport() {
+                            viewport.set_input_as_handled();
+                        }
                     }
-                }
-            },
-            Err(_) => {}
+                },
+                Err(_) => {}
+            }
         }
     }
 }
