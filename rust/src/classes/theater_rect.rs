@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{image, Control, ITextureRect, Image, ImageTexture, TextureRect};
+use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control};
 
 #[derive(GodotClass)]
 #[class(base = TextureRect)]
