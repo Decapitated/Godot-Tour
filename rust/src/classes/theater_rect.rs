@@ -5,9 +5,14 @@ use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Cont
 #[class(base = TextureRect, tool)]
 struct TheaterRect {
     base: Base<TextureRect>,
-    #[export] focused_node: Option<Gd<Control>>,
-    #[export] reference_rect: Option<Gd<ReferenceRect>>,
-    #[export] dim_color: Color,
+    #[export]
+    focused_node: Option<Gd<Control>>,
+    #[export]
+    reference_rect: Option<Gd<ReferenceRect>>,
+    #[export] #[var(get = get_dim_color, set = set_dim_color)]
+    dim_color: Color,
+    #[export] #[var(get = get_padding, set = set_padding)]
+    padding: i32,
     #[export] confine_input: bool,
     cutout_image: Option<Gd<Image>>,
     cutout_texture: Option<Gd<ImageTexture>>,
@@ -24,6 +29,7 @@ impl ITextureRect for TheaterRect {
             focused_node: None,
             reference_rect: None,
             dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.666666),
+            padding: 16,
             confine_input: true,
             cutout_image: None,
             cutout_texture: None,
@@ -42,8 +48,7 @@ impl ITextureRect for TheaterRect {
             let global_rect = focused_node.get_global_rect();
             if self.current_rect != global_rect {
                 self.current_rect = global_rect;
-                self.draw_cutout();
-                self.update_reference_rect();
+                self.update();
             }
         }
     }
@@ -76,9 +81,48 @@ impl ITextureRect for TheaterRect {
 
 #[godot_api]
 impl TheaterRect {
+    // region: Getters/Setters
+
+    // region: Padding
+
+    #[func]
+    fn get_dim_color(&self) -> Color {
+        self.dim_color
+    }
+
+    #[func]
+    fn set_dim_color(&mut self, dim_color: Color) {
+        self.dim_color = dim_color;
+        self.update();
+    }
+
+    // endregion
+
+    // region: Padding
+
+    #[func]
+    fn get_padding(&self) -> i32 {
+        self.padding
+    }
+
+    #[func]
+    fn set_padding(&mut self, padding: i32) {
+        self.padding = padding;
+        self.update();
+    }
+
+    // endregion
+
+    // endregion
+
     #[func]
     fn on_resize(&mut self) {
         self.create_image();
+    }
+
+    fn update(&mut self) {
+        self.draw_cutout();
+        self.update_reference_rect();
     }
 
     fn create_image(&mut self) {
@@ -93,7 +137,8 @@ impl TheaterRect {
         if let Some(image) = self.cutout_image.as_mut() {
             if let Some(texture) = self.cutout_texture.as_mut() {
                 image.fill(self.dim_color);
-                image.fill_rect(self.current_rect.cast_int(), CUTOUT_COLOR);
+                let padded_rect = self.current_rect.grow(self.padding as f32);
+                image.fill_rect(padded_rect.cast_int(), CUTOUT_COLOR);
                 texture.update(image.clone());
             }
         }
@@ -101,8 +146,9 @@ impl TheaterRect {
 
     fn update_reference_rect(&mut self) {
         if let Some(mut reference_rect) = self.reference_rect.clone() {
-            reference_rect.set_global_position(self.current_rect.position);
-            reference_rect.set_size(self.current_rect.size);
+            let padded_rect = self.current_rect.grow(self.padding as f32);
+            reference_rect.set_global_position(padded_rect.position);
+            reference_rect.set_size(padded_rect.size);
         }
     }
 }
