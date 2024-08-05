@@ -1,5 +1,6 @@
 use godot::prelude::*;
-use godot::classes::{control, notify, ColorRect, Control, IColorRect, Shader, ShaderMaterial, Engine, Theme};
+use godot::builtin::Corner;
+use godot::classes::{control, notify, ColorRect, Control, Engine, IColorRect, Shader, ShaderMaterial, StyleBoxFlat, Theme};
 
 #[derive(GodotClass)]
 #[class(base = ColorRect, tool)]
@@ -182,6 +183,7 @@ impl TheaterRect {
         let padded_rect = self.current_rect.grow(self.padding as f32);
         self.update_shader_params(padded_rect);
         self.update_overlay(padded_rect);
+        self.update_theme()
     }
 
     fn update_shader_params(&mut self, rect: Rect2) {
@@ -196,6 +198,17 @@ impl TheaterRect {
             let rect = rect.grow(1.0);
             overlay.set_position(rect.position);
             overlay.set_size(rect.size);
+        }
+    }
+
+    fn update_theme(&mut self) {
+        if let Some(stylebox) = self.theme.get_stylebox("panel".into(), "Panel".into()) {
+            if let Ok(mut flat_stylebox) = stylebox.try_cast::<StyleBoxFlat>() {
+                flat_stylebox.set_corner_radius(Corner::BOTTOM_LEFT, self.corner_radius);
+                flat_stylebox.set_corner_radius(Corner::BOTTOM_RIGHT, self.corner_radius);
+                flat_stylebox.set_corner_radius(Corner::TOP_LEFT, self.corner_radius);
+                flat_stylebox.set_corner_radius(Corner::TOP_RIGHT, self.corner_radius);
+            }
         }
     }
 }
