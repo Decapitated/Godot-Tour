@@ -28,7 +28,7 @@ impl ITextureRect for TheaterRect {
             base,
             focused_node: None,
             reference_rect: None,
-            dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.666666),
+            dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
             padding: 16,
             confine_input: true,
             cutout_image: None,
