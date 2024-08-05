@@ -1,29 +1,34 @@
 use godot::prelude::*;
-use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control, InputEvent, InputEventMouse, ReferenceRect, notify};
+use godot::classes::{ColorRect, IColorRect, Control, InputEvent, InputEventMouse, ReferenceRect, ShaderMaterial, Shader, notify};
 
 #[derive(GodotClass)]
-#[class(base = TextureRect, tool)]
+#[class(base = ColorRect, tool)]
 struct TheaterRect {
-    base: Base<TextureRect>,
+    base: Base<ColorRect>,
+    // Node to focus on.
     #[export]
     focused_node: Option<Gd<Control>>,
+    // ReferenceRect to outline focused node.
     #[export]
     reference_rect: Option<Gd<ReferenceRect>>,
+    // Background color of unfocused area.
     #[export] #[var(get = get_dim_color, set = set_dim_color)]
     dim_color: Color,
+    // Padding between unfocused and focused area.
     #[export] #[var(get = get_padding, set = set_padding)]
     padding: i32,
-    #[export] confine_input: bool,
-    cutout_image: Option<Gd<Image>>,
-    cutout_texture: Option<Gd<ImageTexture>>,
+    // Prevent mouse input outside of focused area.
+    #[export]
+    confine_input: bool,
+    // Cached rect of focused node.
     current_rect: Rect2,
+    // Cached material.
+    cutout_material: Gd<ShaderMaterial>,
 }
 
-const CUTOUT_COLOR: Color = Color::from_rgba(0.0, 0.0, 0.0, 0.0);
-
 #[godot_api]
-impl ITextureRect for TheaterRect {
-    fn init(base: Base<TextureRect>) -> Self {
+impl IColorRect for TheaterRect {
+    fn init(base: Base<ColorRect>) -> Self {
         Self {
             base,
             focused_node: None,
@@ -31,16 +36,16 @@ impl ITextureRect for TheaterRect {
             dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
             padding: 16,
             confine_input: true,
-            cutout_image: None,
-            cutout_texture: None,
             current_rect: Rect2::default(),
+            cutout_material: ShaderMaterial::new_gd(),
         }
     }
 
     fn ready(&mut self) {
-        self.create_image();
-        let on_resize = self.base_mut().callable("on_resize");
-        self.base_mut().connect("resized".into(), on_resize);
+        let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
+        self.cutout_material.set_shader(shader);
+        let material_clone = self.cutout_material.clone();
+        self.base_mut().set_material(material_clone);
     }
 
     fn process(&mut self, _delta: f64) {
@@ -68,11 +73,11 @@ impl ITextureRect for TheaterRect {
     fn on_notification(&mut self, what: notify::ControlNotification) {
         match what {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
-                self.base_mut().set_texture(None as Option<Gd<ImageTexture>>);
+                self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
             },
             notify::ControlNotification::EDITOR_POST_SAVE => {
-                let clone_texture = self.cutout_texture.clone();
-                self.base_mut().set_texture(clone_texture);
+                let material_clone = self.cutout_material.clone();
+                self.base_mut().set_material(material_clone);
             },
             _ => {}
         }
@@ -83,7 +88,7 @@ impl ITextureRect for TheaterRect {
 impl TheaterRect {
     // region: Getters/Setters
 
-    // region: Padding
+    // region: Dim Color
 
     #[func]
     fn get_dim_color(&self) -> Color {
@@ -115,40 +120,22 @@ impl TheaterRect {
 
     // endregion
 
-    #[func]
-    fn on_resize(&mut self) {
-        self.create_image();
-    }
-
     fn update(&mut self) {
-        self.draw_cutout();
-        self.update_reference_rect();
+        let padded_rect = self.current_rect.grow(self.padding as f32);
+        self.update_shader_params(padded_rect);
+        self.update_reference_rect(padded_rect);
     }
 
-    fn create_image(&mut self) {
-        let size = self.base().get_size();
-        self.cutout_image = Image::create(size.x as i32, size.y as i32, false, image::Format::RGBA8);
-        self.cutout_texture = ImageTexture::create_from_image(self.cutout_image.clone());
-        let clone_texture = self.cutout_texture.clone();
-        self.base_mut().set_texture(clone_texture);
+    fn update_shader_params(&mut self, rect: Rect2) {
+        self.cutout_material.set_shader_parameter("dim_color".into(), self.dim_color.to_variant());
+        self.cutout_material.set_shader_parameter("rect_size".into(), rect.size.to_variant());
+        self.cutout_material.set_shader_parameter("rect_position".into(), rect.position.to_variant());
     }
 
-    fn draw_cutout(&mut self) {
-        if let Some(image) = self.cutout_image.as_mut() {
-            if let Some(texture) = self.cutout_texture.as_mut() {
-                image.fill(self.dim_color);
-                let padded_rect = self.current_rect.grow(self.padding as f32);
-                image.fill_rect(padded_rect.cast_int(), CUTOUT_COLOR);
-                texture.update(image.clone());
-            }
-        }
-    }
-
-    fn update_reference_rect(&mut self) {
+    fn update_reference_rect(&mut self, rect: Rect2) {
         if let Some(mut reference_rect) = self.reference_rect.clone() {
-            let padded_rect = self.current_rect.grow(self.padding as f32);
-            reference_rect.set_global_position(padded_rect.position);
-            reference_rect.set_size(padded_rect.size);
+            reference_rect.set_global_position(rect.position);
+            reference_rect.set_size(rect.size);
         }
     }
 }
