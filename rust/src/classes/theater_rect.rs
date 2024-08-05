@@ -49,7 +49,7 @@ impl ITextureRect for TheaterRect {
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        if self.confine_input {
+        if self.confine_input && self.base().is_visible() {
             if let Ok(mouse_event) = event.try_cast::<InputEventMouse>() {
                 if !self.current_rect.has_point(mouse_event.get_global_position()) {
                     if let Some(mut viewport) = self.base().get_viewport() {
