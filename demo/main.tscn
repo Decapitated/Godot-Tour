@@ -1,9 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=4 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shvdj"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.373484, 0.586941, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -89,5 +100,45 @@ mouse_default_cursor_shape = 8
 [node name="Overlay" type="Panel" parent="TheaterRect"]
 layout_mode = 0
 mouse_filter = 2
+
+[node name="PopupRect" type="PopupRect" parent="TheaterRect" node_paths=PackedStringArray("target")]
+target = NodePath("../Overlay")
+layout_mode = 0
+offset_right = 250.0
+offset_bottom = 150.0
+
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupRect"]
+custom_minimum_size = Vector2(250, 150)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupRect/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "This is a popup. It sits next to the provided target."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Previous" type="Button" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+text = "Prev"
+
+[node name="Filler" type="Control" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Next" type="Button" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+text = "Next"
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" method="on_click"]
