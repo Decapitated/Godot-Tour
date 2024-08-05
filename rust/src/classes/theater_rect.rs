@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control, InputEvent, InputEventMouse, ReferenceRect};
+use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control, InputEvent, InputEventMouse, ReferenceRect, notify};
 
 #[derive(GodotClass)]
 #[class(base = TextureRect, tool)]
@@ -57,6 +57,19 @@ impl ITextureRect for TheaterRect {
                     }
                 } 
             }
+        }
+    }
+
+    fn on_notification(&mut self, what: notify::ControlNotification) {
+        match what {
+            notify::ControlNotification::EDITOR_PRE_SAVE => {
+                self.base_mut().set_texture(None as Option<Gd<ImageTexture>>);
+            },
+            notify::ControlNotification::EDITOR_POST_SAVE => {
+                let clone_texture = self.cutout_texture.clone();
+                self.base_mut().set_texture(clone_texture);
+            },
+            _ => {}
         }
     }
 }
