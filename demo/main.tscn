@@ -79,7 +79,6 @@ focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxCon
 background_color = Color(0, 0, 0, 0.9)
 border_color = Color(1, 0, 0, 1)
 border_width = 3
-corner_radius = 32
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
