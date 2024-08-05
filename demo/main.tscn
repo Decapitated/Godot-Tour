@@ -74,9 +74,12 @@ layout_mode = 2
 text = "Click me!"
 script = ExtResource("1_sxr4r")
 
-[node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "reference_rect")]
+[node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node")]
 focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
-reference_rect = NodePath("ReferenceRect")
+background_color = Color(0, 0, 0, 0.9)
+border_color = Color(1, 0, 0, 1)
+border_width = 3
+corner_radius = 32
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -84,16 +87,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="ReferenceRect" type="ReferenceRect" parent="TheaterRect"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-border_width = 5.0
-editor_only = false
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" method="on_click"]

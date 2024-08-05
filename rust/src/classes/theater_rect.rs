@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{ColorRect, IColorRect, Control, InputEvent, InputEventMouse, ReferenceRect, ShaderMaterial, Shader, notify};
+use godot::classes::{ColorRect, IColorRect, Control, InputEvent, InputEventMouse, ShaderMaterial, Shader, notify};
 
 #[derive(GodotClass)]
 #[class(base = ColorRect, tool)]
@@ -8,15 +8,26 @@ struct TheaterRect {
     // Node to focus on.
     #[export]
     focused_node: Option<Gd<Control>>,
-    // ReferenceRect to outline focused node.
-    #[export]
-    reference_rect: Option<Gd<ReferenceRect>>,
     // Background color of unfocused area.
-    #[export] #[var(get = get_dim_color, set = set_dim_color)]
-    dim_color: Color,
+    #[export]
+    #[var(get = get_background_color, set = set_background_color)]
+    background_color: Color,
+    // Border color of unfocused area.
+    #[export]
+    #[var(get = get_border_color, set = set_border_color)]
+    border_color: Color,
+    // Border width of unfocused area.
+    #[export(range=(0.0, 32.0, 1.0, or_greater, suffix = "px"))]
+    #[var(get = get_border_width, set = set_border_width)]
+    border_width: i32,
     // Padding between unfocused and focused area.
-    #[export] #[var(get = get_padding, set = set_padding)]
+    #[export]
+    #[var(get = get_padding, set = set_padding)]
     padding: i32,
+    // Corner radius of focused area.
+    #[export]
+    #[var(get = get_corner_radius, set = set_corner_radius)]
+    corner_radius: i32,
     // Prevent mouse input outside of focused area.
     #[export]
     confine_input: bool,
@@ -32,9 +43,11 @@ impl IColorRect for TheaterRect {
         Self {
             base,
             focused_node: None,
-            reference_rect: None,
-            dim_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
+            background_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
+            border_color: Color::from_rgba(1.0, 0.0, 0.0, 1.0),
+            border_width: 0,
             padding: 16,
+            corner_radius: 0,
             confine_input: true,
             current_rect: Rect2::default(),
             cutout_material: ShaderMaterial::new_gd(),
@@ -53,7 +66,7 @@ impl IColorRect for TheaterRect {
             let global_rect = focused_node.get_global_rect();
             if self.current_rect != global_rect {
                 self.current_rect = global_rect;
-                self.update();
+                self.update_shader_params();
             }
         }
     }
@@ -88,17 +101,47 @@ impl IColorRect for TheaterRect {
 impl TheaterRect {
     // region: Getters/Setters
 
-    // region: Dim Color
+    // region: Background Color
 
     #[func]
-    fn get_dim_color(&self) -> Color {
-        self.dim_color
+    fn get_background_color(&self) -> Color {
+        self.background_color
     }
 
     #[func]
-    fn set_dim_color(&mut self, dim_color: Color) {
-        self.dim_color = dim_color;
-        self.update();
+    fn set_background_color(&mut self, background_color: Color) {
+        self.background_color = background_color;
+        self.update_shader_params();
+    }
+
+    // endregion
+
+    // region: Border Color
+
+    #[func]
+    fn get_border_color(&self) -> Color {
+        self.border_color
+    }
+
+    #[func]
+    fn set_border_color(&mut self, border_color: Color) {
+        self.border_color = border_color;
+        self.update_shader_params();
+    }
+
+    // endregion
+
+    // region: Border Width
+
+    #[func]
+    fn get_border_width(&self) -> i32 {
+        self.border_width
+    }
+
+    #[func]
+    fn set_border_width(&mut self, border_width: i32) {
+        self.border_width = border_width;
+        self.update_shader_params();
     }
 
     // endregion
@@ -113,29 +156,35 @@ impl TheaterRect {
     #[func]
     fn set_padding(&mut self, padding: i32) {
         self.padding = padding;
-        self.update();
+        self.update_shader_params();
+    }
+
+    // endregion
+
+    // region: Corner Radius
+
+    #[func]
+    fn get_corner_radius(&self) -> i32 {
+        self.corner_radius
+    }
+
+    #[func]
+    fn set_corner_radius(&mut self, corner_radius: i32) {
+        self.corner_radius = corner_radius;
+        self.update_shader_params();
     }
 
     // endregion
 
     // endregion
 
-    fn update(&mut self) {
+    fn update_shader_params(&mut self) {
         let padded_rect = self.current_rect.grow(self.padding as f32);
-        self.update_shader_params(padded_rect);
-        self.update_reference_rect(padded_rect);
-    }
-
-    fn update_shader_params(&mut self, rect: Rect2) {
-        self.cutout_material.set_shader_parameter("dim_color".into(), self.dim_color.to_variant());
-        self.cutout_material.set_shader_parameter("rect_size".into(), rect.size.to_variant());
-        self.cutout_material.set_shader_parameter("rect_position".into(), rect.position.to_variant());
-    }
-
-    fn update_reference_rect(&mut self, rect: Rect2) {
-        if let Some(mut reference_rect) = self.reference_rect.clone() {
-            reference_rect.set_global_position(rect.position);
-            reference_rect.set_size(rect.size);
-        }
+        self.cutout_material.set_shader_parameter("rect_size".into(), padded_rect.size.to_variant());
+        self.cutout_material.set_shader_parameter("rect_position".into(), padded_rect.position.to_variant());
+        self.cutout_material.set_shader_parameter("corner_radius".into(), self.corner_radius.to_variant());
+        self.cutout_material.set_shader_parameter("background_color".into(), self.background_color.to_variant());
+        self.cutout_material.set_shader_parameter("border_color".into(), self.border_color.to_variant());
+        self.cutout_material.set_shader_parameter("border_width".into(), self.border_width.to_variant());
     }
 }
