@@ -2,7 +2,7 @@ use godot::prelude::*;
 use godot::classes::{TextureRect, ITextureRect, Image, image, ImageTexture, Control, InputEvent, InputEventMouse, ReferenceRect};
 
 #[derive(GodotClass)]
-#[class(base = TextureRect)]
+#[class(base = TextureRect, tool)]
 struct TheaterRect {
     base: Base<TextureRect>,
     #[export] focused_node: Option<Gd<Control>>,
