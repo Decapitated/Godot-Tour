@@ -18,12 +18,12 @@ struct TheaterRect {
     #[var(get = get_background_color, set = set_background_color)]
     background_color: Color,
     // Padding between unfocused and focused area.
-    #[export]
     #[var(get = get_padding, set = set_padding)]
+    #[export(range=(0.0, 64.0, 1.0, or_greater, suffix="px"))]
     padding: i32,
     // Corner radius of focused area.
-    #[export]
     #[var(get = get_corner_radius, set = set_corner_radius)]
+    #[export(range=(0.0, 64.0, 1.0, or_greater, suffix="px"))]
     corner_radius: i32,
     // Prevent mouse input outside of focused area.
     #[export]
@@ -44,7 +44,7 @@ impl IColorRect for TheaterRect {
             overlay: None,
             background_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
             padding: 16,
-            corner_radius: 0,
+            corner_radius: 16,
             confine_input: true,
             current_rect: Rect2::default(),
             cutout_material: ShaderMaterial::new_gd(),

@@ -77,7 +77,6 @@ script = ExtResource("1_sxr4r")
 [node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "overlay")]
 focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
 overlay = NodePath("Panel")
-corner_radius = 16
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
