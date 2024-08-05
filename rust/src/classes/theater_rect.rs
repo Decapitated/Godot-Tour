@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{ColorRect, IColorRect, Control, InputEvent, InputEventMouse, ShaderMaterial, Shader, notify};
+use godot::classes::{control, notify, ColorRect, Control, IColorRect, Shader, ShaderMaterial, Engine};
 
 #[derive(GodotClass)]
 #[class(base = ColorRect, tool)]
@@ -8,18 +8,14 @@ struct TheaterRect {
     // Node to focus on.
     #[export]
     focused_node: Option<Gd<Control>>,
+    // Overlay node for borders and other styles/effects.
+    #[export]
+    #[var(get = get_overlay, set = set_overlay)]
+    overlay: Option<Gd<Control>>,
     // Background color of unfocused area.
     #[export]
     #[var(get = get_background_color, set = set_background_color)]
     background_color: Color,
-    // Border color of unfocused area.
-    #[export]
-    #[var(get = get_border_color, set = set_border_color)]
-    border_color: Color,
-    // Border width of unfocused area.
-    #[export(range=(0.0, 32.0, 1.0, or_greater, suffix = "px"))]
-    #[var(get = get_border_width, set = set_border_width)]
-    border_width: i32,
     // Padding between unfocused and focused area.
     #[export]
     #[var(get = get_padding, set = set_padding)]
@@ -43,9 +39,8 @@ impl IColorRect for TheaterRect {
         Self {
             base,
             focused_node: None,
+            overlay: None,
             background_color: Color::from_rgba(0.0, 0.0, 0.0, 0.9),
-            border_color: Color::from_rgba(1.0, 0.0, 0.0, 1.0),
-            border_width: 0,
             padding: 16,
             corner_radius: 0,
             confine_input: true,
@@ -66,20 +61,23 @@ impl IColorRect for TheaterRect {
             let global_rect = focused_node.get_global_rect();
             if self.current_rect != global_rect {
                 self.current_rect = global_rect;
-                self.update_shader_params();
+                self.update();
             }
         }
-    }
 
-    fn input(&mut self, event: Gd<InputEvent>) {
-        if self.confine_input && self.base().is_visible() {
-            if let Ok(mouse_event) = event.try_cast::<InputEventMouse>() {
-                if !self.current_rect.has_point(mouse_event.get_global_position()) {
-                    if let Some(mut viewport) = self.base().get_viewport() {
-                        viewport.set_input_as_handled();
-                    }
-                } 
+        let engine = Engine::singleton();
+
+        // Confine input to the focused node.
+        if !engine.is_editor_hint() && self.confine_input && self.base().is_visible() {
+            if let Some(viewport) = self.base().get_viewport() {
+                if self.current_rect.has_point(viewport.get_mouse_position()) {
+                    self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
+                } else {
+                    self.base_mut().set_mouse_filter(control::MouseFilter::STOP);
+                }
             }
+        } else {
+            self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
         }
     }
 
@@ -87,10 +85,15 @@ impl IColorRect for TheaterRect {
         match what {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
                 self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
+                if let Some(mut overlay) = self.overlay.clone() {
+                    overlay.set_position(Vector2::default());
+                    overlay.set_size(Vector2::default());
+                }
             },
             notify::ControlNotification::EDITOR_POST_SAVE => {
                 let material_clone = self.cutout_material.clone();
                 self.base_mut().set_material(material_clone);
+                self.update();
             },
             _ => {}
         }
@@ -100,6 +103,21 @@ impl IColorRect for TheaterRect {
 #[godot_api]
 impl TheaterRect {
     // region: Getters/Setters
+
+    // region: Overlay
+
+    #[func]
+    fn get_overlay(&self) -> Option<Gd<Control>> {
+        self.overlay.clone()
+    }
+
+    #[func]
+    fn set_overlay(&mut self, overlay: Option<Gd<Control>>) {
+        self.overlay = overlay;
+        self.update();
+    }
+
+    // endregion
 
     // region: Background Color
 
@@ -111,37 +129,7 @@ impl TheaterRect {
     #[func]
     fn set_background_color(&mut self, background_color: Color) {
         self.background_color = background_color;
-        self.update_shader_params();
-    }
-
-    // endregion
-
-    // region: Border Color
-
-    #[func]
-    fn get_border_color(&self) -> Color {
-        self.border_color
-    }
-
-    #[func]
-    fn set_border_color(&mut self, border_color: Color) {
-        self.border_color = border_color;
-        self.update_shader_params();
-    }
-
-    // endregion
-
-    // region: Border Width
-
-    #[func]
-    fn get_border_width(&self) -> i32 {
-        self.border_width
-    }
-
-    #[func]
-    fn set_border_width(&mut self, border_width: i32) {
-        self.border_width = border_width;
-        self.update_shader_params();
+        self.update();
     }
 
     // endregion
@@ -156,7 +144,7 @@ impl TheaterRect {
     #[func]
     fn set_padding(&mut self, padding: i32) {
         self.padding = padding;
-        self.update_shader_params();
+        self.update();
     }
 
     // endregion
@@ -171,20 +159,31 @@ impl TheaterRect {
     #[func]
     fn set_corner_radius(&mut self, corner_radius: i32) {
         self.corner_radius = corner_radius;
-        self.update_shader_params();
+        self.update();
     }
 
     // endregion
 
     // endregion
 
-    fn update_shader_params(&mut self) {
+    fn update(&mut self) {
         let padded_rect = self.current_rect.grow(self.padding as f32);
-        self.cutout_material.set_shader_parameter("rect_size".into(), padded_rect.size.to_variant());
-        self.cutout_material.set_shader_parameter("rect_position".into(), padded_rect.position.to_variant());
+        self.update_shader_params(padded_rect);
+        self.update_overlay(padded_rect);
+    }
+
+    fn update_shader_params(&mut self, rect: Rect2) {
+        self.cutout_material.set_shader_parameter("rect_size".into(), rect.size.to_variant());
+        self.cutout_material.set_shader_parameter("rect_position".into(), rect.position.to_variant());
         self.cutout_material.set_shader_parameter("corner_radius".into(), self.corner_radius.to_variant());
         self.cutout_material.set_shader_parameter("background_color".into(), self.background_color.to_variant());
-        self.cutout_material.set_shader_parameter("border_color".into(), self.border_color.to_variant());
-        self.cutout_material.set_shader_parameter("border_width".into(), self.border_width.to_variant());
+    }
+
+    fn update_overlay(&mut self, rect: Rect2) {
+        if let Some(mut overlay) = self.overlay.clone() {
+            let rect = rect.grow(1.0);
+            overlay.set_position(rect.position);
+            overlay.set_size(rect.size);
+        }
     }
 }

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=4 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
+[ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://addons/gdtour/TheaterRect.theme" id="2_aexla"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
@@ -74,17 +75,22 @@ layout_mode = 2
 text = "Click me!"
 script = ExtResource("1_sxr4r")
 
-[node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node")]
+[node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "overlay")]
 focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
-background_color = Color(0, 0, 0, 0.9)
-border_color = Color(1, 0, 0, 1)
-border_width = 3
+overlay = NodePath("Panel")
+corner_radius = 16
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 8
+theme = ExtResource("2_aexla")
+
+[node name="Panel" type="Panel" parent="TheaterRect"]
+layout_mode = 0
 mouse_filter = 2
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" method="on_click"]
