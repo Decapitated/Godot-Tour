@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=3 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
-[ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://addons/gdtour/TheaterRect.theme" id="2_aexla"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
@@ -87,7 +86,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 mouse_default_cursor_shape = 8
-theme = ExtResource("2_aexla")
 
 [node name="Panel" type="Panel" parent="TheaterRect"]
 layout_mode = 0

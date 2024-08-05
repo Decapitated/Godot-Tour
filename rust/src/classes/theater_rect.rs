@@ -1,5 +1,5 @@
 use godot::prelude::*;
-use godot::classes::{control, notify, ColorRect, Control, IColorRect, Shader, ShaderMaterial, Engine};
+use godot::classes::{control, notify, ColorRect, Control, IColorRect, Shader, ShaderMaterial, Engine, Theme};
 
 #[derive(GodotClass)]
 #[class(base = ColorRect, tool)]
@@ -31,6 +31,7 @@ struct TheaterRect {
     current_rect: Rect2,
     // Cached material.
     cutout_material: Gd<ShaderMaterial>,
+    theme: Gd<Theme>,
 }
 
 #[godot_api]
@@ -46,14 +47,19 @@ impl IColorRect for TheaterRect {
             confine_input: true,
             current_rect: Rect2::default(),
             cutout_material: ShaderMaterial::new_gd(),
+            theme: load::<Theme>("res://addons/gdtour/TheaterRect.theme"),
         }
     }
 
     fn ready(&mut self) {
+        // Load cutout shader and apply to TheaterRect material.
         let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
         self.cutout_material.set_shader(shader);
         let material_clone = self.cutout_material.clone();
         self.base_mut().set_material(material_clone);
+
+        let theme_clone = self.theme.clone();
+        self.base_mut().set_theme(theme_clone);
     }
 
     fn process(&mut self, _delta: f64) {
@@ -84,7 +90,11 @@ impl IColorRect for TheaterRect {
     fn on_notification(&mut self, what: notify::ControlNotification) {
         match what {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
+                // Remove material.
                 self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
+                // Remove theme.
+                self.base_mut().set_theme(None as Option<Gd<Theme>>);
+                // Reset overlay position and size.
                 if let Some(mut overlay) = self.overlay.clone() {
                     overlay.set_position(Vector2::default());
                     overlay.set_size(Vector2::default());
@@ -93,6 +103,8 @@ impl IColorRect for TheaterRect {
             notify::ControlNotification::EDITOR_POST_SAVE => {
                 let material_clone = self.cutout_material.clone();
                 self.base_mut().set_material(material_clone);
+                let theme_clone = self.theme.clone();
+                self.base_mut().set_theme(theme_clone);
                 self.update();
             },
             _ => {}
