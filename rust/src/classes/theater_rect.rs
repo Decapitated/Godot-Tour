@@ -38,6 +38,11 @@ struct TheaterRect {
 #[godot_api]
 impl IColorRect for TheaterRect {
     fn init(base: Base<ColorRect>) -> Self {
+        // Load cutout shader and apply to material.
+        let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
+        let mut material =  ShaderMaterial::new_gd();
+        material.set_shader(shader);
+        // Set default values.
         Self {
             base,
             focused_node: None,
@@ -47,15 +52,12 @@ impl IColorRect for TheaterRect {
             corner_radius: 16,
             confine_input: true,
             current_rect: Rect2::default(),
-            cutout_material: ShaderMaterial::new_gd(),
+            cutout_material: material,
             theme: load::<Theme>("res://addons/gdtour/TheaterRect.theme"),
         }
     }
 
     fn ready(&mut self) {
-        // Load cutout shader and apply to TheaterRect material.
-        let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
-        self.cutout_material.set_shader(shader);
         let material_clone = self.cutout_material.clone();
         self.base_mut().set_material(material_clone);
 
