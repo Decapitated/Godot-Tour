@@ -3,6 +3,9 @@ entry_symbol = "gdext_rust_init"
 compatibility_minimum = 4.2
 reloadable = true
 
+[icons]
+TheaterRect = "icons/TheaterRect.svg"
+
 [libraries]
 linux.debug.x86_64 =     "res://addons/gdtour/target/debug/libgodot_tour.so"
 linux.release.x86_64 =   "res://addons/gdtour/target/release/libgodot_tour.so"
