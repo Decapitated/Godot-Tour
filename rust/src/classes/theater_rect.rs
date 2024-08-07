@@ -1,11 +1,11 @@
 use godot::prelude::*;
 use godot::builtin::Corner;
-use godot::classes::{control, notify, ColorRect, Control, Engine, IColorRect, Shader, ShaderMaterial, StyleBoxFlat, Theme};
+use godot::classes::{control, notify, Control, IControl, Engine, Shader, ShaderMaterial, StyleBoxFlat, Theme};
 
 #[derive(GodotClass)]
-#[class(base = ColorRect, tool)]
+#[class(base = Control, tool)]
 struct TheaterRect {
-    base: Base<ColorRect>,
+    base: Base<Control>,
     // Node to focus on.
     #[export]
     focused_node: Option<Gd<Control>>,
@@ -36,8 +36,8 @@ struct TheaterRect {
 }
 
 #[godot_api]
-impl IColorRect for TheaterRect {
-    fn init(base: Base<ColorRect>) -> Self {
+impl IControl for TheaterRect {
+    fn init(base: Base<Control>) -> Self {
         // Load cutout shader and apply to material.
         let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
         let mut material =  ShaderMaterial::new_gd();
@@ -113,10 +113,17 @@ impl IColorRect for TheaterRect {
             _ => {}
         }
     }
+
+    fn draw(&mut self) {
+        let rect = self.base().get_rect();
+        self.base_mut().draw_rect(rect, TheaterRect::DEFAULT_COLOR);
+    }
 }
 
 #[godot_api]
 impl TheaterRect {
+    const DEFAULT_COLOR: Color = Color::from_rgba(1.0, 0.0, 0.0, 0.75);
+
     // region: Getters/Setters
 
     // region: Overlay
