@@ -1,6 +1,6 @@
 use godot::prelude::*;
 use godot::builtin::Corner;
-use godot::classes::{control, notify, Control, IControl, Engine, Shader, ShaderMaterial, StyleBoxFlat, Theme};
+use godot::classes::{control, notify, Control, IControl, Panel, Engine, Shader, ShaderMaterial, StyleBoxFlat};
 
 #[derive(GodotClass)]
 #[class(base = Control, tool)]
@@ -12,7 +12,7 @@ struct TheaterRect {
     // Overlay node for borders and other styles/effects.
     #[export]
     #[var(get = get_overlay, set = set_overlay)]
-    overlay: Option<Gd<Control>>,
+    overlay: Option<Gd<Panel>>,
     // Background color of unfocused area.
     #[export]
     #[var(get = get_background_color, set = set_background_color)]
@@ -32,7 +32,6 @@ struct TheaterRect {
     current_rect: Rect2,
     // Cached material.
     cutout_material: Gd<ShaderMaterial>,
-    theme: Gd<Theme>,
 }
 
 #[godot_api]
@@ -53,19 +52,16 @@ impl IControl for TheaterRect {
             confine_input: true,
             current_rect: Rect2::default(),
             cutout_material: material,
-            theme: load::<Theme>("res://addons/gdtour/TheaterRect.theme"),
         }
     }
 
     fn ready(&mut self) {
         let material_clone = self.cutout_material.clone();
         self.base_mut().set_material(material_clone);
-
-        let theme_clone = self.theme.clone();
-        self.base_mut().set_theme(theme_clone);
     }
 
     fn process(&mut self, _delta: f64) {
+        // Check if focused node rect has changed.
         if let Some(focused_node) = self.focused_node.clone() {
             let global_rect = focused_node.get_global_rect();
             if self.current_rect != global_rect {
@@ -76,7 +72,7 @@ impl IControl for TheaterRect {
 
         let engine = Engine::singleton();
 
-        // Confine input to the focused node.
+        // Confine input to the focused control rect.
         if !engine.is_editor_hint() && self.confine_input && self.base().is_visible() {
             if let Some(viewport) = self.base().get_viewport() {
                 if self.current_rect.has_point(viewport.get_mouse_position()) {
@@ -95,8 +91,6 @@ impl IControl for TheaterRect {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
                 // Remove material.
                 self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
-                // Remove theme.
-                self.base_mut().set_theme(None as Option<Gd<Theme>>);
                 // Reset overlay position and size.
                 if let Some(mut overlay) = self.overlay.clone() {
                     overlay.set_position(Vector2::default());
@@ -106,8 +100,6 @@ impl IControl for TheaterRect {
             notify::ControlNotification::EDITOR_POST_SAVE => {
                 let material_clone = self.cutout_material.clone();
                 self.base_mut().set_material(material_clone);
-                let theme_clone = self.theme.clone();
-                self.base_mut().set_theme(theme_clone);
                 self.update();
             },
             _ => {}
@@ -129,12 +121,12 @@ impl TheaterRect {
     // region: Overlay
 
     #[func]
-    fn get_overlay(&self) -> Option<Gd<Control>> {
+    fn get_overlay(&self) -> Option<Gd<Panel>> {
         self.overlay.clone()
     }
 
     #[func]
-    fn set_overlay(&mut self, overlay: Option<Gd<Control>>) {
+    fn set_overlay(&mut self, overlay: Option<Gd<Panel>>) {
         self.overlay = overlay;
         self.update();
     }
@@ -192,7 +184,7 @@ impl TheaterRect {
         let padded_rect = self.current_rect.grow(self.padding as f32);
         self.update_shader_params(padded_rect);
         self.update_overlay(padded_rect);
-        self.update_theme()
+        self.update_stylebox()
     }
 
     fn update_shader_params(&mut self, rect: Rect2) {
@@ -210,13 +202,15 @@ impl TheaterRect {
         }
     }
 
-    fn update_theme(&mut self) {
-        if let Some(stylebox) = self.theme.get_stylebox("panel".into(), "Panel".into()) {
-            if let Ok(mut flat_stylebox) = stylebox.try_cast::<StyleBoxFlat>() {
-                flat_stylebox.set_corner_radius(Corner::BOTTOM_LEFT, self.corner_radius);
-                flat_stylebox.set_corner_radius(Corner::BOTTOM_RIGHT, self.corner_radius);
-                flat_stylebox.set_corner_radius(Corner::TOP_LEFT, self.corner_radius);
-                flat_stylebox.set_corner_radius(Corner::TOP_RIGHT, self.corner_radius);
+    fn update_stylebox(&mut self) {
+        if let Some(overlay) = self.overlay.clone() {
+            if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
+                if let Ok(mut flat_stylebox) = stylebox.try_cast::<StyleBoxFlat>() {
+                    flat_stylebox.set_corner_radius(Corner::BOTTOM_LEFT, self.corner_radius);
+                    flat_stylebox.set_corner_radius(Corner::BOTTOM_RIGHT, self.corner_radius);
+                    flat_stylebox.set_corner_radius(Corner::TOP_LEFT, self.corner_radius);
+                    flat_stylebox.set_corner_radius(Corner::TOP_RIGHT, self.corner_radius);
+                }
             }
         }
     }
