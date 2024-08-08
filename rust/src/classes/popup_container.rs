@@ -106,6 +106,7 @@ impl PopupContainer {
     fn update(&mut self) {
         self.update_position();
         self.update_size();
+        self.update_child_control();
     }
 
     fn update_position(&mut self) {
@@ -118,6 +119,19 @@ impl PopupContainer {
         for child in children.iter_shared() {
             if let Ok(control) = child.try_cast::<Control>() {
                 self.base_mut().set_size(control.get_size());
+                break;
+            }
+        }
+    }
+
+    fn update_child_control(&self) {
+        let children = self.base().get_children();
+        for child in children.iter_shared() {
+            if let Ok(mut control) = child.try_cast::<Control>() {
+                // Child control should always be positioned at (0, 0).
+                control.set_position(Vector2::default());
+                // Child control should size itself. i.e. Set a custom minimum size.
+                control.set_size(Vector2::default());
             }
         }
     }
