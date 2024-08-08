@@ -1,17 +1,17 @@
 use godot::prelude::*;
-use godot::classes::{MarginContainer, IMarginContainer, Control, notify};
+use godot::classes::{Container, IContainer, Control, notify};
 
 #[derive(GodotClass)]
-#[class(base = MarginContainer, tool)]
-struct PopupRect {
-    base: Base<MarginContainer>,
+#[class(base = Container, tool)]
+struct PopupContainer {
+    base: Base<Container>,
     #[export]
     target: Option<Gd<Control>>,
 }
 
 #[godot_api]
-impl IMarginContainer for PopupRect {
-    fn init(base: Base<MarginContainer>) -> Self {
+impl IContainer for PopupContainer {
+    fn init(base: Base<Container>) -> Self {
         Self {
             base,
             target: None,
@@ -40,7 +40,7 @@ impl IMarginContainer for PopupRect {
 }
 
 #[godot_api]
-impl PopupRect {
+impl PopupContainer {
     fn reset(&mut self) {
         self.base_mut().set_size(Vector2::default());
         self.base_mut().set_position(Vector2::default());
@@ -48,12 +48,22 @@ impl PopupRect {
 
     fn update(&mut self) {
         self.update_position();
+        self.update_size();
     }
 
     fn update_position(&mut self) {
         if let Some(target) = self.target.clone() {
             let global_rect = target.get_global_rect();
             self.base_mut().set_position(global_rect.position + Vector2::new(global_rect.size.x, 0.0));
+        }
+    }
+
+    fn update_size(&mut self) {
+        let children = self.base().get_children();
+        for child in children.iter_shared() {
+            if let Ok(control) = child.try_cast::<Control>() {
+                self.base_mut().set_size(control.get_size());
+            }
         }
     }
 }
