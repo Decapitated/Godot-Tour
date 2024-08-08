@@ -15,3 +15,15 @@ Focus the users attention on a particular `Control`.<br>
     <td><img src="docs/images/TheaterRect-Outlined.png"></td>
   </tr>
 </table>
+
+### `PopupContainer`
+Moves next to a target `Control`.<br>
+#### Features
+- Provide your own `Control`. Let the container handle positioning.
+- Toggle `Smart Positioning`. The popup will try to stay on-screen.
+<table>
+  <tr>
+    <td><img src="docs/images/PopupContainer.png"></td>
+    <td><img src="docs/images/PopupContainer2.png"></td>
+  </tr>
+</table>
