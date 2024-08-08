@@ -17,3 +17,4 @@ config/icon="res://icon.svg"
 [display]
 
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
