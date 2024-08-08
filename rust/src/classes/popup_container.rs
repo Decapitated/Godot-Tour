@@ -34,7 +34,7 @@ impl IContainer for PopupContainer {
         Self {
             base,
             target: None,
-            default_position: PopupPosition::RightCenter,
+            default_position: PopupPosition::RightTop,
         }
     }
 
@@ -83,10 +83,8 @@ impl PopupContainer {
     }
 
     fn update_position(&mut self) {
-        if let Some(target) = self.target.clone() {
-            let global_rect = target.get_global_rect();
-            self.base_mut().set_position(global_rect.position + Vector2::new(global_rect.size.x, 0.0));
-        }
+        let popup_position = self.get_popup_position();
+        self.base_mut().set_position(popup_position);
     }
 
     fn update_size(&mut self) {
@@ -96,5 +94,28 @@ impl PopupContainer {
                 self.base_mut().set_size(control.get_size());
             }
         }
+    }
+
+    fn get_popup_position(&self) -> Vector2 {
+        if let Some(target) = self.target.clone() {
+            let global_rect = target.get_global_rect();
+            let global_center = global_rect.position + (global_rect.size / 2.0);
+            let size = self.base().get_size();
+            return match self.default_position {
+                PopupPosition::TopLeft => global_rect.position - Vector2::new(0.0, size.y),
+                PopupPosition::TopCenter => Vector2::new(global_center.x, global_rect.position.y) - Vector2::new(size.x / 2.0, size.y),
+                PopupPosition::TopRight => Vector2::new(global_rect.position.x + global_rect.size.x, global_rect.position.y) - Vector2::new(size.x, size.y),
+                PopupPosition::BottomLeft => Vector2::new(global_rect.position.x, global_rect.position.y + global_rect.size.y),
+                PopupPosition::BottomCenter => Vector2::new(global_center.x, global_rect.position.y + global_rect.size.y) - Vector2::new(size.x / 2.0, 0.0),
+                PopupPosition::BottomRight => global_rect.position + global_rect.size - Vector2::new(size.x, 0.0),
+                PopupPosition::LeftTop => global_rect.position - Vector2::new(size.x, 0.0),
+                PopupPosition::LeftCenter => Vector2::new(global_rect.position.x, global_center.y) - Vector2::new(size.x, size.y / 2.0),
+                PopupPosition::LeftBottom => Vector2::new(global_rect.position.x, global_rect.position.y + global_rect.size.y) - Vector2::new(size.x, size.y),
+                PopupPosition::RightTop => Vector2::new(global_rect.position.x + global_rect.size.x, global_rect.position.y),
+                PopupPosition::RightCenter => Vector2::new(global_rect.position.x + global_rect.size.x, global_center.y) - Vector2::new(0.0, size.y / 2.0),
+                PopupPosition::RightBottom => global_rect.position + global_rect.size - Vector2::new(0.0, size.y),
+            }
+        }
+        Vector2::default()
     }
 }
