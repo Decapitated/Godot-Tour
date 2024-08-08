@@ -105,8 +105,11 @@ impl PopupContainer {
 
     fn update(&mut self) {
         self.update_position();
-        self.update_size();
-        self.update_child_control();
+        let child_restult = self.get_child();
+        if let Some(child) = child_restult {
+            self.update_size(child.clone());
+            self.update_child_control(child.clone());
+        }
     }
 
     fn update_position(&mut self) {
@@ -114,26 +117,15 @@ impl PopupContainer {
         self.base_mut().set_position(popup_position);
     }
 
-    fn update_size(&mut self) {
-        let children = self.base().get_children();
-        for child in children.iter_shared() {
-            if let Ok(control) = child.try_cast::<Control>() {
-                self.base_mut().set_size(control.get_size());
-                break;
-            }
-        }
+    fn update_size(&mut self, child: Gd<Control>) {
+        self.base_mut().set_size(child.get_size());
     }
 
-    fn update_child_control(&self) {
-        let children = self.base().get_children();
-        for child in children.iter_shared() {
-            if let Ok(mut control) = child.try_cast::<Control>() {
-                // Child control should always be positioned at (0, 0).
-                control.set_position(Vector2::default());
-                // Child control should size itself. i.e. Set a custom minimum size.
-                control.set_size(Vector2::default());
-            }
-        }
+    fn update_child_control(&self, mut child: Gd<Control>) {
+        // Child control should always be positioned at (0, 0).
+        child.set_position(Vector2::default());
+        // Child control should size itself. i.e. Set a custom minimum size.
+        child.set_size(Vector2::default());
     }
 
     fn get_position_smart(&self) -> Vector2 {
@@ -189,6 +181,18 @@ impl PopupContainer {
         let intersection_option = popup_rect.intersection(viewport_rect);
         if let Some(intersection) = intersection_option {
             return Some(intersection.area());
+        }
+        None
+    }
+
+    fn get_child(&self) -> Option<Gd<Control>> {
+        let children = self.base().get_children();
+        for child in children.iter_shared() {
+            if let Ok(control) = child.try_cast::<Control>() {
+                if control.is_visible() {
+                    return Some(control);
+                }
+            }
         }
         None
     }
