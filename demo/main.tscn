@@ -90,7 +90,7 @@ text = "Click me!"
 script = ExtResource("1_sxr4r")
 
 [node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "overlay")]
-focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button")
+focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
 overlay = NodePath("Overlay")
 layout_mode = 1
 anchors_preset = 15
@@ -109,7 +109,6 @@ mouse_filter = 2
 [node name="PopupContainer" type="PopupContainer" parent="TheaterRect" node_paths=PackedStringArray("target")]
 target = NodePath("../Overlay")
 position = 2
-smart_position = false
 layout_mode = 0
 
 [node name="Example1" type="MarginContainer" parent="TheaterRect/PopupContainer"]
