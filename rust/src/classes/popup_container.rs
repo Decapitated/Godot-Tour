@@ -1,5 +1,7 @@
+use std::cmp::Ordering;
+
 use godot::prelude::*;
-use godot::classes::{Container, IContainer, control, Control, notify};
+use godot::classes::{control, notify, Container, Control, IContainer};
 
 #[derive(GodotConvert, Var, Export)]
 #[godot(via = i64)]
@@ -18,6 +20,26 @@ enum PopupPosition {
     RightBottom,
 }
 
+impl PopupPosition {
+    fn iterator() -> std::slice::Iter<'static, PopupPosition> {
+        static POPUP_POSITIONS: [PopupPosition; 12] = [
+            PopupPosition::TopLeft,
+            PopupPosition::TopCenter,
+            PopupPosition::TopRight,
+            PopupPosition::BottomLeft,
+            PopupPosition::BottomCenter,
+            PopupPosition::BottomRight,
+            PopupPosition::LeftTop,
+            PopupPosition::LeftCenter,
+            PopupPosition::LeftBottom,
+            PopupPosition::RightTop,
+            PopupPosition::RightCenter,
+            PopupPosition::RightBottom,
+        ];
+        POPUP_POSITIONS.iter()
+    }
+}
+
 #[derive(GodotClass)]
 #[class(base = Container, tool)]
 struct PopupContainer {
@@ -25,7 +47,10 @@ struct PopupContainer {
     #[export]
     target: Option<Gd<Control>>,
     #[export]
-    default_position: PopupPosition,
+    position: PopupPosition,
+    /// Enable smart positioning.
+    #[export]
+    smart_position: bool,
 }
 
 #[godot_api]
@@ -34,7 +59,8 @@ impl IContainer for PopupContainer {
         Self {
             base,
             target: None,
-            default_position: PopupPosition::RightTop,
+            position: PopupPosition::RightTop,
+            smart_position: true,
         }
     }
 
@@ -83,7 +109,7 @@ impl PopupContainer {
     }
 
     fn update_position(&mut self) {
-        let popup_position = self.get_popup_position();
+        let popup_position = if self.smart_position { self.get_position_smart() } else { self.get_popup_position(&self.position) };
         self.base_mut().set_position(popup_position);
     }
 
@@ -96,12 +122,33 @@ impl PopupContainer {
         }
     }
 
-    fn get_popup_position(&self) -> Vector2 {
+    fn get_position_smart(&self) -> Vector2 {
+        if let Some(viewport) = self.base().get_viewport() {
+            let viewport_rect = viewport.get_visible_rect();
+            let areas = PopupPosition::iterator().map(|position| {
+                let popup_rect = self.get_popup_rect(position);
+                let area = match self.check_popup_position(viewport_rect, popup_rect) {
+                    Some(area) => area,
+                    None => -1.0,
+                };
+                (position, area)
+            });
+            let max_area = areas.max_by(|x, y| {
+                x.1.partial_cmp(&y.1).unwrap_or(Ordering::Equal)
+            });
+            if let Some((position, _)) = max_area {
+                return self.get_popup_position(position);
+            }
+        }
+        Vector2::default()
+    }
+
+    fn get_popup_position(&self, position: &PopupPosition) -> Vector2 {
         if let Some(target) = self.target.clone() {
             let global_rect = target.get_global_rect();
             let global_center = global_rect.position + (global_rect.size / 2.0);
             let size = self.base().get_size();
-            return match self.default_position {
+            return match position {
                 PopupPosition::TopLeft => global_rect.position - Vector2::new(0.0, size.y),
                 PopupPosition::TopCenter => Vector2::new(global_center.x, global_rect.position.y) - Vector2::new(size.x / 2.0, size.y),
                 PopupPosition::TopRight => Vector2::new(global_rect.position.x + global_rect.size.x, global_rect.position.y) - Vector2::new(size.x, size.y),
@@ -117,5 +164,18 @@ impl PopupContainer {
             }
         }
         Vector2::default()
+    }
+
+    fn get_popup_rect(&self, position: &PopupPosition) -> Rect2 {
+        let popup_position = self.get_popup_position(position);
+        return Rect2::new(popup_position, self.base().get_size());
+    }
+    
+    fn check_popup_position(&self, viewport_rect: Rect2, popup_rect: Rect2) -> Option<f32> {
+        let intersection_option = popup_rect.intersection(viewport_rect);
+        if let Some(intersection) = intersection_option {
+            return Some(intersection.area());
+        }
+        None
     }
 }
