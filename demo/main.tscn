@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=5 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
 [ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://TheaterRect.theme" id="2_rk1ak"]
@@ -103,21 +103,28 @@ theme = ExtResource("2_rk1ak")
 layout_mode = 0
 mouse_filter = 2
 
-[node name="PopupRect" type="PopupRect" parent="TheaterRect" node_paths=PackedStringArray("target")]
+[node name="PopupContainer" type="PopupContainer" parent="TheaterRect" node_paths=PackedStringArray("target")]
 target = NodePath("../Overlay")
 layout_mode = 0
-offset_right = 250.0
-offset_bottom = 150.0
 
-[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupRect"]
+[node name="MarginContainer" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/MarginContainer"]
 custom_minimum_size = Vector2(250, 150)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupRect/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "This is a popup. It sits next to the provided target."
@@ -125,20 +132,20 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Previous" type="Button" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Previous" type="Button" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Prev"
 
-[node name="Filler" type="Control" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Filler" type="Control" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Next" type="Button" parent="TheaterRect/PopupRect/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Next" type="Button" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Next"

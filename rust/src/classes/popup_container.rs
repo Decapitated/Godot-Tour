@@ -1,5 +1,22 @@
 use godot::prelude::*;
-use godot::classes::{Container, IContainer, Control, notify};
+use godot::classes::{Container, IContainer, control, Control, notify};
+
+#[derive(GodotConvert, Var, Export)]
+#[godot(via = i64)]
+enum PopupPosition {
+    TopLeft,
+    TopCenter,
+    TopRight,
+    BottomLeft,
+    BottomCenter,
+    BottomRight,
+    LeftTop,
+    LeftCenter,
+    LeftBottom,
+    RightTop,
+    RightCenter,
+    RightBottom,
+}
 
 #[derive(GodotClass)]
 #[class(base = Container, tool)]
@@ -7,6 +24,8 @@ struct PopupContainer {
     base: Base<Container>,
     #[export]
     target: Option<Gd<Control>>,
+    #[export]
+    default_position: PopupPosition,
 }
 
 #[godot_api]
@@ -15,11 +34,11 @@ impl IContainer for PopupContainer {
         Self {
             base,
             target: None,
+            default_position: PopupPosition::RightCenter,
         }
     }
 
     fn ready(&mut self) {
-
     }
 
     fn process(&mut self, _delta: f64) {
@@ -36,6 +55,18 @@ impl IContainer for PopupContainer {
             },
             _ => {}
         }
+    }
+
+    fn get_allowed_size_flags_horizontal(&self) -> PackedInt32Array {
+        let mut packed_array =  PackedInt32Array::new();
+        packed_array.push(control::SizeFlags::SHRINK_CENTER.ord() as i32);
+        packed_array
+    }
+
+    fn get_allowed_size_flags_vertical(&self) -> PackedInt32Array {
+        let mut packed_array =  PackedInt32Array::new();
+        packed_array.push(control::SizeFlags::SHRINK_CENTER.ord() as i32);
+        packed_array
     }
 }
 
