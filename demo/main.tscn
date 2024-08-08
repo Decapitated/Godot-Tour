@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=7 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
 [ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://TheaterRect.theme" id="2_rk1ak"]
+[ext_resource type="Texture2D" uid="uid://buk5q5nw8eioy" path="res://icon.svg" id="3_0f52y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
@@ -16,6 +17,8 @@ corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_067e5"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -87,7 +90,7 @@ text = "Click me!"
 script = ExtResource("1_sxr4r")
 
 [node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "overlay")]
-focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
+focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button")
 overlay = NodePath("Overlay")
 layout_mode = 1
 anchors_preset = 15
@@ -105,26 +108,29 @@ mouse_filter = 2
 
 [node name="PopupContainer" type="PopupContainer" parent="TheaterRect" node_paths=PackedStringArray("target")]
 target = NodePath("../Overlay")
+position = 2
+smart_position = false
 layout_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+[node name="Example1" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/MarginContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example1"]
 custom_minimum_size = Vector2(250, 150)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "This is a popup. It sits next to the provided target."
@@ -132,22 +138,55 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Previous" type="Button" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Previous" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Prev"
 
-[node name="Filler" type="Control" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Filler" type="Control" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Next" type="Button" parent="TheaterRect/PopupContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Next" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Next"
+
+[node name="Example2" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example2"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example2/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TextureRect" type="TextureRect" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("3_0f52y")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer"]
+clip_contents = false
+layout_mode = 2
+bbcode_enabled = true
+text = "Put [rainbow freq=1.0 sat=0.8 val=0.8]whatever[/rainbow] you like inside.
+[shake rate=20.0 level=5 connected=1]PopupContainer[/shake]"
+fit_content = true
+autowrap_mode = 2
+custom_effects = [SubResource("RichTextEffect_067e5")]
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button" method="on_click"]
