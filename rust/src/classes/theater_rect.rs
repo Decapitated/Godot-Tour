@@ -86,6 +86,11 @@ impl IControl for TheaterRect {
         }
     }
 
+    fn draw(&mut self) {
+        let rect = self.base().get_rect();
+        self.base_mut().draw_rect(rect, TheaterRect::DEFAULT_COLOR);
+    }
+    
     fn on_notification(&mut self, what: notify::ControlNotification) {
         match what {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
@@ -104,11 +109,6 @@ impl IControl for TheaterRect {
             },
             _ => {}
         }
-    }
-
-    fn draw(&mut self) {
-        let rect = self.base().get_rect();
-        self.base_mut().draw_rect(rect, TheaterRect::DEFAULT_COLOR);
     }
 }
 
