@@ -11,15 +11,15 @@ Provides functionality to implement things like UI tours.
 - Focus the users attention on any number of `Control` 's.
 - Prevent mouse input outside of the focused region.
 
-<img src="docs/images/TheaterRect-Inspector.png" height="245px">
-<img src="docs/images/TheaterRect.png" height="245px">
+<img src="docs/images/TheaterRect-Inspector.png" height="280px" align="left">
+<img src="docs/images/TheaterRect.png" height="280px">
 
 ### `PopupContainer`
 
 - Provide your own `Control` and let the container handle positioning.
 - Toggle `Smart Positioning` for the popup to stay on-screen.
 
-<img src="docs/images/PopupContainer.png" height="210px">
+<img src="docs/images/PopupContainer.png" height="210px" align="left">
 <img src="docs/images/PopupContainer2.png" height="210px">
 
 ## Resources
