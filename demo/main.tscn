@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene load_steps=9 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
 [ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://TheaterRect.theme" id="2_rk1ak"]
@@ -6,6 +6,14 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
 bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="FocusedNode" id="FocusedNode_1nfgq"]
+target = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
+overlay = NodePath("Overlay")
+
+[sub_resource type="FocusedNode" id="FocusedNode_fwhtp"]
+target = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CenterContainer/Button")
+overlay = NodePath("Overlay2")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shvdj"]
 content_margin_left = 16.0
@@ -89,9 +97,8 @@ layout_mode = 2
 text = "Click me!"
 script = ExtResource("1_sxr4r")
 
-[node name="TheaterRect" type="TheaterRect" parent="." node_paths=PackedStringArray("focused_node", "overlay")]
-focused_node = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
-overlay = NodePath("Overlay")
+[node name="TheaterRect" type="TheaterRect" parent="."]
+focused_nodes = Array[FocusedNode]([SubResource("FocusedNode_1nfgq"), SubResource("FocusedNode_fwhtp")])
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -103,6 +110,10 @@ mouse_default_cursor_shape = 8
 theme = ExtResource("2_rk1ak")
 
 [node name="Overlay" type="Panel" parent="TheaterRect"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="Overlay2" type="Panel" parent="TheaterRect"]
 layout_mode = 0
 mouse_filter = 2
 
