@@ -19,8 +19,8 @@ Provides functionality to implement things like UI tours.
 - Provide your own `Control` and let the container handle positioning.
 - Toggle `Smart Positioning` for the popup to stay on-screen.
 
-<img src="docs/images/PopupContainer.png" height="210px" align="left">
-<img src="docs/images/PopupContainer2.png" height="210px">
+<img src="docs/images/PopupContainer.png" width="405px" align="left">
+<img src="docs/images/PopupContainer2.png" width="405px">
 
 ## Resources
 ### `FocusedNode`
