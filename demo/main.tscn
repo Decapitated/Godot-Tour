@@ -117,7 +117,7 @@ mouse_filter = 2
 layout_mode = 0
 mouse_filter = 2
 
-[node name="PopupContainer" type="PopupContainer" parent="TheaterRect" node_paths=PackedStringArray("target")]
+[node name="PopupContainer" type="PopupContainer" parent="TheaterRect"]
 target = NodePath("../Overlay")
 position = 2
 layout_mode = 0

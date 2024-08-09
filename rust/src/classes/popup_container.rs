@@ -45,7 +45,8 @@ impl PopupPosition {
 struct PopupContainer {
     base: Base<Container>,
     #[export]
-    target: Option<Gd<Control>>,
+    #[var(hint = NODE_PATH_VALID_TYPES, hint_string = "Control")]
+    target: NodePath,
     #[export]
     position: PopupPosition,
     /// Enable smart positioning.
@@ -58,7 +59,7 @@ impl IContainer for PopupContainer {
     fn init(base: Base<Container>) -> Self {
         Self {
             base,
-            target: None,
+            target: NodePath::default(),
             position: PopupPosition::RightTop,
             smart_position: true,
         }
@@ -77,22 +78,20 @@ impl IContainer for PopupContainer {
                 self.reset();
                 self.base_mut().set_custom_minimum_size(Vector2::default());
             },
-            notify::ContainerNotification::EDITOR_POST_SAVE => {
-                self.update();
-            },
+            notify::ContainerNotification::EDITOR_POST_SAVE => {},
             _ => {}
         }
     }
 
     fn get_allowed_size_flags_horizontal(&self) -> PackedInt32Array {
         let mut packed_array =  PackedInt32Array::new();
-        packed_array.push(control::SizeFlags::SHRINK_CENTER.ord() as i32);
+        packed_array.push(control::SizeFlags::SHRINK_BEGIN.ord() as i32);
         packed_array
     }
 
     fn get_allowed_size_flags_vertical(&self) -> PackedInt32Array {
         let mut packed_array =  PackedInt32Array::new();
-        packed_array.push(control::SizeFlags::SHRINK_CENTER.ord() as i32);
+        packed_array.push(control::SizeFlags::SHRINK_BEGIN.ord() as i32);
         packed_array
     }
 }
@@ -152,7 +151,7 @@ impl PopupContainer {
     }
 
     fn get_popup_position(&self, position: &PopupPosition) -> Vector2 {
-        if let Some(target) = self.target.clone() {
+        if let Some(target) = self.base().try_get_node_as::<Control>(self.target.clone()) {
             let global_rect = target.get_global_rect();
             let global_center = global_rect.position + (global_rect.size / 2.0);
             let size = self.base().get_size();
