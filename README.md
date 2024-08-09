@@ -6,13 +6,13 @@ Provides functionality to implement things like UI tours.
 
 ## Available Nodes
 ### `TheaterRect`
-Focus the users attention on a particular `Control`.<br>
+Focus the users attention on any number of `Control`'s.<br>
 #### Features
 - Toggle the ability to prevent mouse input outside of the focused region.
 <table>
   <tr>
     <td><img src="docs/images/TheaterRect.png"></td>
-    <td><img src="docs/images/TheaterRect-Outlined.png"></td>
+    <td><img src="docs/images/TheaterRect2.png"></td>
   </tr>
 </table>
 

@@ -75,6 +75,7 @@ impl IContainer for PopupContainer {
         match what {
             notify::ContainerNotification::EDITOR_PRE_SAVE => {
                 self.reset();
+                self.base_mut().set_custom_minimum_size(Vector2::default());
             },
             notify::ContainerNotification::EDITOR_POST_SAVE => {
                 self.update();
@@ -104,6 +105,7 @@ impl PopupContainer {
     }
 
     fn update(&mut self) {
+        self.base_mut().set_custom_minimum_size(Vector2::default());
         self.update_position();
         let child_restult = self.get_child();
         if let Some(child) = child_restult {
