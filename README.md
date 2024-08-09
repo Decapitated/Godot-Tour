@@ -10,7 +10,6 @@ Provides functionality to implement things like UI tours.
 
 - Focus the users attention on any number of `Control` 's.
 - Prevent mouse input outside of the focused region.
-- Super easy to use.
 
 <img src="docs/images/TheaterRect-Inspector.png" height="245px">
 <img src="docs/images/TheaterRect.png" height="245px">
