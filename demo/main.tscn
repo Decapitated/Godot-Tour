@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
-[ext_resource type="Theme" uid="uid://bf4vmadtkow8t" path="res://TheaterRect.theme" id="2_rk1ak"]
+[ext_resource type="Theme" path="res://TheaterRect.theme" id="2_wqa3l"]
 [ext_resource type="Texture2D" uid="uid://buk5q5nw8eioy" path="res://icon.svg" id="3_0f52y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
@@ -107,7 +107,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 mouse_default_cursor_shape = 8
-theme = ExtResource("2_rk1ak")
+theme = ExtResource("2_wqa3l")
 
 [node name="Overlay" type="Panel" parent="TheaterRect"]
 layout_mode = 0
