@@ -111,7 +111,7 @@ impl TheaterRect {
         }).collect::<Array<Rect2>>();
         self.update_shader_params(&rects);
         self.update_overlays(&rects);
-        // self.update_stylebox();
+        self.update_styleboxes();
     }
 
     fn update_shader_params(&mut self, rects: &Array<Rect2>) {
@@ -146,16 +146,20 @@ impl TheaterRect {
         });
     }
 
-    // fn update_stylebox(&mut self) {
-    //     if let Some(overlay) = self.overlay.clone() {
-    //         if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
-    //             if let Ok(mut flat_stylebox) = stylebox.try_cast::<StyleBoxFlat>() {
-    //                 flat_stylebox.set_corner_radius(Corner::BOTTOM_LEFT, self.corner_radius);
-    //                 flat_stylebox.set_corner_radius(Corner::BOTTOM_RIGHT, self.corner_radius);
-    //                 flat_stylebox.set_corner_radius(Corner::TOP_LEFT, self.corner_radius);
-    //                 flat_stylebox.set_corner_radius(Corner::TOP_RIGHT, self.corner_radius);
-    //             }
-    //         }
-    //     }
-    // }
+    fn update_styleboxes(&mut self) {
+        self.focused_nodes.iter_shared().for_each(|focused_node_result| {
+            if let Some(focused_node) = focused_node_result {
+                if let Some(overlay) = self.base().try_get_node_as::<Panel>(focused_node.bind().overlay.clone()) {
+                    if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
+                        if let Ok(mut flat_stylebox) = stylebox.try_cast::<StyleBoxFlat>() {
+                            flat_stylebox.set_corner_radius(Corner::BOTTOM_LEFT, self.corner_radius);
+                            flat_stylebox.set_corner_radius(Corner::BOTTOM_RIGHT, self.corner_radius);
+                            flat_stylebox.set_corner_radius(Corner::TOP_LEFT, self.corner_radius);
+                            flat_stylebox.set_corner_radius(Corner::TOP_RIGHT, self.corner_radius);
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
