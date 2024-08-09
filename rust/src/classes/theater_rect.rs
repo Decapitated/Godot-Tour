@@ -46,17 +46,15 @@ impl IControl for TheaterRect {
     fn process(&mut self, _delta: f64) {
         self.update();
 
-        let engine = Engine::singleton();
-
         // Confine input to the focused control rect.
-        if !engine.is_editor_hint() && self.confine_input && self.base().is_visible() {
-            // if let Some(viewport) = self.base().get_viewport() {
-            //     if self.current_rect.has_point(viewport.get_mouse_position()) {
-            //         self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
-            //     } else {
-            //         self.base_mut().set_mouse_filter(control::MouseFilter::STOP);
-            //     }
-            // }
+        if self.confine_input && !Engine::singleton().is_editor_hint() && self.base().is_visible() {
+            if let Some(viewport) = self.base().get_viewport() {
+                if self.has_point(viewport.get_mouse_position()) {
+                    self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
+                } else {
+                    self.base_mut().set_mouse_filter(control::MouseFilter::STOP);
+                }
+            }
         } else {
             self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
         }
@@ -175,5 +173,19 @@ impl TheaterRect {
             }
             0.0
         }).collect()
+    }
+
+    fn has_point(&self, point: Vector2) -> bool {
+        for focused_node_result in self.focused_nodes.iter_shared() {
+            if let Some(focused_node) = focused_node_result {
+                if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
+                    let target_rect = target.get_global_rect();
+                    if target_rect.has_point(point) {
+                        return true;
+                    } 
+                }
+            }
+        }
+        return false;
     }
 }

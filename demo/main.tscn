@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cvrwxwcki5rf0"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
-[ext_resource type="Theme" path="res://TheaterRect.theme" id="2_wqa3l"]
+[ext_resource type="Theme" uid="uid://dt4xor4dcglxt" path="res://TheaterRect.theme" id="2_wqa3l"]
 [ext_resource type="Texture2D" uid="uid://buk5q5nw8eioy" path="res://icon.svg" id="3_0f52y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhxab"]
