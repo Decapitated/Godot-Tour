@@ -65,5 +65,4 @@ impl TourPlugin {
         }
         None
     }
-
 }

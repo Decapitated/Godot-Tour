@@ -10,7 +10,7 @@ use super::tour_plugin::TourPlugin;
 #[class(base=Object)]
 pub struct TourSingleton {
     base: Base<Object>,
-    #[export]
+    #[var]
     pub theater_rect: Gd<TheaterRect>,
     pub tour_plugin: Option<Gd<TourPlugin>>,
 }
@@ -31,6 +31,26 @@ impl IObject for TourSingleton {
 
 #[godot_api]
 impl TourSingleton {
+    pub fn find_child(mut node: Gd<Node>, pattern: &str, recursive: bool, owned: bool) -> Option<Gd<Node>> {
+        let find_child_args = array![pattern.to_variant(), recursive.to_variant(), owned.to_variant()];
+        let result = node.callv("find_child".into(), find_child_args);
+        let node_result = result.try_to();
+        if let Ok(node) = node_result {
+            return Some(node);
+        }
+        None
+    }
+
+    pub fn find_children(mut node: Gd<Node>, pattern: &str, node_type: &str, recursive: bool, owned: bool) -> Option<Array<Gd<Node>>> {
+        let find_children_args = array![pattern.to_variant(), node_type.to_variant(), recursive.to_variant(), owned.to_variant()];
+        let result = node.callv("find_children".into(), find_children_args);
+        let node_result = result.try_to();
+        if let Ok(node) = node_result {
+            return Some(node);
+        }
+        None
+    }
+
     #[func]
     fn create_focused_node(target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
         let mut focused_node = FocusedNode::new_gd();
@@ -87,7 +107,7 @@ impl TourSingleton {
     }
 
     #[func]
-    pub fn get_main(&mut self, base_control: Gd<Control>) -> Option<Gd<Control>> {
+    pub fn get_main(&self, base_control: Gd<Control>) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
             return tour_plugin.bind_mut().get_main(base_control);
         }
@@ -95,9 +115,35 @@ impl TourSingleton {
     }
 
     #[func]
-    pub fn get_main_full(&mut self) -> Option<Gd<Control>> {
+    pub fn get_main_full(&self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
             return tour_plugin.bind_mut().get_main_full();
+        }
+        None
+    }
+
+    #[func]
+    pub fn get_run_bar(&self, title_bar: Gd<Control>) -> Option<Gd<Control>> {
+        if let Some(nodes) = TourSingleton::find_children(title_bar.upcast::<Node>(), "*EditorRunBar*", "EditorRunBar", false, false) {
+            if let Some(node) = nodes.get(0) {
+                if let Ok(run_bar) = node.try_cast::<Control>() {
+                    return Some(run_bar);
+                }
+            }
+        }
+        None
+    }
+
+    #[func]
+    pub fn get_run_bar_full(&self) -> Option<Gd<Control>> {
+        if let Some(title_bar) = self.get_title_bar_full() {
+            if let Some(nodes) = TourSingleton::find_children(title_bar.upcast::<Node>(), "*EditorRunBar*", "EditorRunBar", false, false) {
+                if let Some(node) = nodes.get(0) {
+                    if let Ok(run_bar) = node.try_cast::<Control>() {
+                        return Some(run_bar);
+                    }
+                }
+            }
         }
         None
     }

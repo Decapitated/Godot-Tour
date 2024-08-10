@@ -16,7 +16,7 @@ func _enter_tree():
 	var button_focused_node = TourSingleton.create_focused_node(button, null)
 	TourSingleton.add_focused_node(button_focused_node)
 
-	var run_bar = title_bar.find_children("*EditorRunBar*", "EditorRunBar", false, false)[0]
+	var run_bar = TourSingleton.get_run_bar(title_bar)
 	if(run_bar):
 		var focused_node = TourSingleton.create_focused_node(run_bar, null)
 		TourSingleton.add_focused_node(focused_node)
