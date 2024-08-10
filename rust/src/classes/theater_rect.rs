@@ -1,6 +1,6 @@
 use godot::prelude::*;
 use godot::builtin::Corner;
-use godot::classes::{control, notify, Control, Engine, IControl, Panel, Shader, ShaderMaterial, StyleBoxFlat, StyleBoxTexture};
+use godot::classes::{control, notify, Control, IControl, Panel, Shader, ShaderMaterial, StyleBoxFlat, StyleBoxTexture};
 
 use super::focused_node::FocusedNode;
 
@@ -60,7 +60,7 @@ impl IControl for TheaterRect {
         self.update();
 
         // Confine input to the focused control rect.
-        if self.confine_input && !Engine::singleton().is_editor_hint() {
+        if self.confine_input {
             if let Some(viewport) = self.base().get_viewport() {
                 if self.has_point(viewport.get_mouse_position()) {
                     self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);

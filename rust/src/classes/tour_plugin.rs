@@ -1,9 +1,11 @@
-use godot::classes::control::{LayoutPreset, MouseFilter};
-use godot::classes::editor_plugin::{CustomControlContainer, DockSlot};
+use godot::classes::control::{CursorShape, LayoutPreset, MouseFilter};
+use godot::classes::editor_plugin::CustomControlContainer;
 use godot::prelude::*;
-use godot::classes::{EditorPlugin, IEditorPlugin, Control, VBoxContainer, Button};
+use godot::classes::{EditorPlugin, IEditorPlugin, Button};
 
+use super::focused_node::FocusedNode;
 use super::theater_rect::TheaterRect;
+
 
 #[derive(GodotClass)]
 #[class(tool, editor_plugin, base=EditorPlugin)]
@@ -39,13 +41,36 @@ impl TourPlugin {
         // Set TheaterRect defaults.
         self.theater_rect.bind_mut().base_mut().set_anchors_preset(LayoutPreset::FULL_RECT);
         self.theater_rect.bind_mut().base_mut().set_mouse_filter(MouseFilter::IGNORE);
-        self.theater_rect.bind_mut().base_mut().set_visible(false);
+        self.theater_rect.bind_mut().base_mut().set_default_cursor_shape(CursorShape::FORBIDDEN);
+        self.theater_rect.bind_mut().set_confine_input(true);
+
+        let editor_interface_result = self.base_mut().get_editor_interface();
+        if let Some(editor_interface) = editor_interface_result {
+            if let Some(mut base_control) = editor_interface.get_base_control() {
+                let theater_rect_clone = self.theater_rect.clone();
+                base_control.add_child(theater_rect_clone);
+            }
+        }
         
+        let editor_plugin = self.base().clone();
         // Set Button defaults.
         self.button.set_text("Click me!".into());
-        self.button.set_custom_minimum_size(Vector2::new(80.0, 32.0));
+        // Connect to pressed signal.
+        self.button.connect("pressed".into(), editor_plugin.callable("on_pressed"));
 
         let button_clone = self.button.clone();
         self.base_mut().add_control_to_container(CustomControlContainer::TOOLBAR, button_clone);
+
+        let button_parent = self.button.get_parent().unwrap();
+
+        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
+        let mut focused_node = FocusedNode::new_gd();
+        focused_node.bind_mut().target = button_parent.get_path();
+        focused_nodes.push(Some(focused_node));
+    }
+
+    #[func]
+    fn on_pressed(&self) {
+        godot_print!("Button pressed!");
     }
 }
