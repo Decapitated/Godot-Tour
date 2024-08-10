@@ -6,7 +6,7 @@ use super::focused_node::FocusedNode;
 
 #[derive(GodotClass)]
 #[class(base = Control, tool)]
-struct TheaterRect {
+pub struct TheaterRect {
     base: Base<Control>,
     /// Nodes to focus on.
     #[export]
@@ -44,10 +44,23 @@ impl IControl for TheaterRect {
     }
 
     fn process(&mut self, _delta: f64) {
+        let mut ret = false;
+        if !self.base().is_visible() {
+            ret = true;
+        } else if self.focused_nodes.is_empty() {
+            self.base_mut().set_visible(false);
+            ret = true;
+        }
+
+        if ret {
+            self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
+            return;
+        }
+
         self.update();
 
         // Confine input to the focused control rect.
-        if self.confine_input && !Engine::singleton().is_editor_hint() && self.base().is_visible() {
+        if self.confine_input && !Engine::singleton().is_editor_hint() {
             if let Some(viewport) = self.base().get_viewport() {
                 if self.has_point(viewport.get_mouse_position()) {
                     self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
