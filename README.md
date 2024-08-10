@@ -2,7 +2,7 @@
 A GDExtension built with Rust, using [gdext](https://github.com/godot-rust/gdext).
 
 ## Description
-Provides functionality to implement things like UI tours.
+Provides functionality to implement things like UI tours in the Editor & In-Game.
 
 ## Available Nodes
 ### `TheaterRect`
