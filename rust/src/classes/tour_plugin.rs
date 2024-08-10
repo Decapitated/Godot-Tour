@@ -40,9 +40,7 @@ impl TourPlugin {
     fn setup(&mut self) {
         // Set TheaterRect defaults.
         self.theater_rect.bind_mut().base_mut().set_anchors_preset(LayoutPreset::FULL_RECT);
-        self.theater_rect.bind_mut().base_mut().set_mouse_filter(MouseFilter::IGNORE);
         self.theater_rect.bind_mut().base_mut().set_default_cursor_shape(CursorShape::FORBIDDEN);
-        self.theater_rect.bind_mut().set_confine_input(true);
 
         let editor_interface_result = self.base_mut().get_editor_interface();
         if let Some(editor_interface) = editor_interface_result {
