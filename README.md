@@ -22,7 +22,7 @@ Provides functionality to implement things like UI tours in the Editor & In-Game
 <img src="docs/images/PopupContainer2.png" width="405px">
 
 ## Singletons
-### `TourSingleton`
+### `Tour`
 - Adds ability to script editor tours.
 - Provides utilities for interacting with the editor UI.
 

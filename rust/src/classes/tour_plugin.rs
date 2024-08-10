@@ -25,7 +25,7 @@ impl IEditorPlugin for TourPlugin {
 #[godot_api]
 impl TourPlugin {
     fn get_tour_singleton() -> Gd<TourSingleton> {
-        godot::classes::Engine::singleton().get_singleton(StringName::from("TourSingleton")).unwrap().cast::<TourSingleton>()
+        godot::classes::Engine::singleton().get_singleton(StringName::from("Tour")).unwrap().cast::<TourSingleton>()
     }
 
     pub fn get_base_control(&mut self) -> Option<Gd<Control>> {

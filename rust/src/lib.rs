@@ -15,7 +15,7 @@ unsafe impl ExtensionLibrary for GodotTour {
             // The StringName identifies your singleton and can be
             // used later to access it.
             Engine::singleton().register_singleton(
-                StringName::from("TourSingleton"),
+                StringName::from("Tour"),
                 TourSingleton::new_alloc().upcast::<Object>(),
             );
         }
@@ -25,7 +25,7 @@ unsafe impl ExtensionLibrary for GodotTour {
         if level == InitLevel::Scene {
             // Get the `Engine` instance and `StringName` for your singleton.
             let mut engine = Engine::singleton();
-            let singleton_name = StringName::from("TourSingleton");
+            let singleton_name = StringName::from("Tour");
 
             // We need to retrieve the pointer to the singleton object,
             // as it has to be freed manually - unregistering singleton 

@@ -6,8 +6,9 @@ use super::focused_node::FocusedNode;
 use super::theater_rect::TheaterRect;
 use super::tour_plugin::TourPlugin;
 
+/// Singleton for controlling the an editor tour.
 #[derive(GodotClass)]
-#[class(base=Object)]
+#[class(base=Object, rename=Tour)]
 pub struct TourSingleton {
     base: Base<Object>,
     #[var]
@@ -51,6 +52,7 @@ impl TourSingleton {
         None
     }
 
+    /// Helper function for creating a focused node resource.
     #[func]
     fn create_focused_node(target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
         let mut focused_node = FocusedNode::new_gd();
@@ -63,12 +65,14 @@ impl TourSingleton {
         focused_node
     }
 
+    /// Helper function for adding a focused node to the theater_rect.
     #[func]
     fn add_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
         let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
         focused_nodes.push(Some(focused_node));
     }
 
+    /// Helper function for removing a focused node from the theater_rect.
     #[func]
     fn remove_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
         let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
@@ -76,12 +80,14 @@ impl TourSingleton {
         focused_nodes.erase(&value);
     }
 
+    /// Helper function for removing all focused nodes from the theater_rect.
     #[func]
     fn clear_focused_nodes(&mut self) {
         let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
         focused_nodes.clear();
     }
 
+    /// Get base control of editor window.
     #[func]
     pub fn get_base_control(&self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
@@ -90,6 +96,7 @@ impl TourSingleton {
         None
     }
 
+    /// Get title bar control of editor window.
     #[func]
     pub fn get_title_bar(&self, base_control: Gd<Control>) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
@@ -98,6 +105,7 @@ impl TourSingleton {
         None
     }
 
+    /// Get title bar control of editor window.
     #[func]
     pub fn get_title_bar_full(&self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
@@ -106,22 +114,7 @@ impl TourSingleton {
         None
     }
 
-    #[func]
-    pub fn get_main(&self, base_control: Gd<Control>) -> Option<Gd<Control>> {
-        if let Some(mut tour_plugin) = self.tour_plugin.clone() {
-            return tour_plugin.bind_mut().get_main(base_control);
-        }
-        None
-    }
-
-    #[func]
-    pub fn get_main_full(&self) -> Option<Gd<Control>> {
-        if let Some(mut tour_plugin) = self.tour_plugin.clone() {
-            return tour_plugin.bind_mut().get_main_full();
-        }
-        None
-    }
-
+    /// Get run bar control in title bar.
     #[func]
     pub fn get_run_bar(&self, title_bar: Gd<Control>) -> Option<Gd<Control>> {
         if let Some(nodes) = TourSingleton::find_children(title_bar.upcast::<Node>(), "*EditorRunBar*", "EditorRunBar", false, false) {
@@ -134,6 +127,7 @@ impl TourSingleton {
         None
     }
 
+    /// Get run bar control in title bar.
     #[func]
     pub fn get_run_bar_full(&self) -> Option<Gd<Control>> {
         if let Some(title_bar) = self.get_title_bar_full() {
@@ -144,6 +138,24 @@ impl TourSingleton {
                     }
                 }
             }
+        }
+        None
+    }
+    
+    /// Get main control of editor window. This control holds everything below the title bar.
+    #[func]
+    pub fn get_main(&self, base_control: Gd<Control>) -> Option<Gd<Control>> {
+        if let Some(mut tour_plugin) = self.tour_plugin.clone() {
+            return tour_plugin.bind_mut().get_main(base_control);
+        }
+        None
+    }
+
+    /// Get main control of editor window. This control holds everything below the title bar.
+    #[func]
+    pub fn get_main_full(&self) -> Option<Gd<Control>> {
+        if let Some(mut tour_plugin) = self.tour_plugin.clone() {
+            return tour_plugin.bind_mut().get_main_full();
         }
         None
     }
