@@ -26,8 +26,8 @@ Provides functionality to implement things like UI tours in the Editor & In-Game
 - Adds ability to script editor tours.
 - Provides utilities for interacting with the editor UI.
 
-<img src="docs/images/CustomTour-EditorPlugin.png" height="275px" align="left">
-<img src="docs/images/CustomTour.png" height="275px">
+<img src="docs/images/CustomTour-EditorPlugin.png" height="270px" align="left">
+<img src="docs/images/CustomTour.png" height="270px">
 
 ## Resources
 ### `FocusedNode`
