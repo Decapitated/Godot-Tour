@@ -27,11 +27,3 @@ func _exit_tree():
 
 func on_pressed():
 	TourSingleton.theater_rect.visible = !TourSingleton.theater_rect.visible
-	
-func print_node(node: Node, depth = 0):
-	print("%s%s: %s" % ["".lpad(depth * 4), node.name, node.get_class()])
-	for child in node.get_children():
-		print_node(child, depth + 1)
-
-func get_run_bar(title_bar: Control) -> Control:
-	return title_bar.find_children("*EditorRunBar*", "EditorRunBar", false, false)[0]
