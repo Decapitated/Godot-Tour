@@ -5,7 +5,6 @@ A GDExtension built with Rust, using [gdext](https://github.com/godot-rust/gdext
 Provides functionality to implement things like UI tours.
 
 ## Available Nodes
-
 ### `TheaterRect`
 
 - Focus the users attention on any number of `Control` 's.
@@ -21,6 +20,14 @@ Provides functionality to implement things like UI tours.
 
 <img src="docs/images/PopupContainer.png" width="405px" align="left">
 <img src="docs/images/PopupContainer2.png" width="405px">
+
+## Singletons
+### `TourSingleton`
+- Adds ability to script editor tours.
+- Provides utilities for interacting with the editor UI.
+
+<img src="docs/images/CustomTour-EditorPlugin.png" height="280px" align="left">
+<img src="docs/images/CustomTour.png" height="280px">
 
 ## Resources
 ### `FocusedNode`
