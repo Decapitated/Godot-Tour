@@ -8,7 +8,7 @@
 bg_color = Color(1, 1, 1, 1)
 
 [sub_resource type="FocusedNode" id="FocusedNode_1nfgq"]
-target = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TabContainer")
+target = NodePath("../PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/RichTextLabel")
 overlay = NodePath("Overlay")
 
 [sub_resource type="FocusedNode" id="FocusedNode_fwhtp"]
