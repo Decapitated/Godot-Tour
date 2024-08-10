@@ -32,7 +32,7 @@ impl IObject for TourSingleton {
 #[godot_api]
 impl TourSingleton {
     #[func]
-    fn create_focused_node(&mut self, target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
+    fn create_focused_node(target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
         let mut focused_node = FocusedNode::new_gd();
         if let Some(target) = target {
             focused_node.bind_mut().target = target.get_path();
@@ -61,9 +61,9 @@ impl TourSingleton {
         let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
         focused_nodes.clear();
     }
-    
+
     #[func]
-    pub fn get_base_control(&mut self) -> Option<Gd<Control>> {
+    pub fn get_base_control(&self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
             return tour_plugin.bind_mut().get_base_control();
         }
@@ -71,7 +71,7 @@ impl TourSingleton {
     }
 
     #[func]
-    pub fn get_title_bar(&mut self, base_control: Gd<Control>) -> Option<Gd<Control>> {
+    pub fn get_title_bar(&self, base_control: Gd<Control>) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
             return tour_plugin.bind_mut().get_title_bar(base_control);
         }
@@ -79,25 +79,25 @@ impl TourSingleton {
     }
 
     #[func]
-    pub fn get_title_bar_full(&mut self) -> Option<Gd<Control>> {
+    pub fn get_title_bar_full(&self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
             return tour_plugin.bind_mut().get_title_bar_full();
         }
         None
     }
-    
+
     #[func]
-    pub fn get_run_bar(&self, title_bar: Gd<Control>) -> Option<Gd<Control>> {
+    pub fn get_main(&mut self, base_control: Gd<Control>) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
-            return tour_plugin.bind_mut().get_run_bar(title_bar);
+            return tour_plugin.bind_mut().get_main(base_control);
         }
         None
     }
-    
+
     #[func]
-    pub fn get_run_bar_full(&mut self) -> Option<Gd<Control>> {
+    pub fn get_main_full(&mut self) -> Option<Gd<Control>> {
         if let Some(mut tour_plugin) = self.tour_plugin.clone() {
-            return tour_plugin.bind_mut().get_run_bar_full();
+            return tour_plugin.bind_mut().get_main_full();
         }
         None
     }
