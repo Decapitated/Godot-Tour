@@ -29,6 +29,7 @@ func _exit_tree():
 	
 func setup():
 	Tour.theater_rect.theme = TheaterTheme
+	Tour.theater_rect.confine_input = true
 	
 	#region Toggle Button
 	var toggle_button_overlay = Panel.new()
