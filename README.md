@@ -26,8 +26,8 @@ Provides functionality to implement things like UI tours.
 - Adds ability to script editor tours.
 - Provides utilities for interacting with the editor UI.
 
-<img src="docs/images/CustomTour-EditorPlugin.png" height="280px" align="left">
-<img src="docs/images/CustomTour.png" height="280px">
+<img src="docs/images/CustomTour-EditorPlugin.png" height="275px" align="left">
+<img src="docs/images/CustomTour.png" height="275px">
 
 ## Resources
 ### `FocusedNode`
