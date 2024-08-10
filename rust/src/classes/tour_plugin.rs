@@ -1,7 +1,6 @@
-use godot::classes::control::{CursorShape, LayoutPreset, MouseFilter};
-use godot::classes::editor_plugin::CustomControlContainer;
+use godot::classes::control::{CursorShape, LayoutPreset};
 use godot::prelude::*;
-use godot::classes::{EditorPlugin, IEditorPlugin, Button};
+use godot::classes::{EditorPlugin, IEditorPlugin, Button, Control, Panel};
 
 use super::focused_node::FocusedNode;
 use super::theater_rect::TheaterRect;
@@ -49,26 +48,79 @@ impl TourPlugin {
                 base_control.add_child(theater_rect_clone);
             }
         }
-        
-        let editor_plugin = self.base().clone();
-        // Set Button defaults.
-        self.button.set_text("Click me!".into());
-        // Connect to pressed signal.
-        self.button.connect("pressed".into(), editor_plugin.callable("on_pressed"));
+    }
 
-        let button_clone = self.button.clone();
-        self.base_mut().add_control_to_container(CustomControlContainer::TOOLBAR, button_clone);
+    #[func]
+    fn get_theater_rect(&mut self) -> Gd<TheaterRect> {
+        self.theater_rect.clone()
+    }
 
-        let button_parent = self.button.get_parent().unwrap();
-
-        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
+    #[func]
+    fn create_focused_node(&mut self, target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
         let mut focused_node = FocusedNode::new_gd();
-        focused_node.bind_mut().target = button_parent.get_path();
+        if let Some(target) = target {
+            focused_node.bind_mut().target = target.get_path();
+        }
+        if let Some(overlay) = overlay {
+            focused_node.bind_mut().overlay = overlay.get_path();
+        }
+        focused_node
+    }
+
+    #[func]
+    fn add_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
+        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
         focused_nodes.push(Some(focused_node));
     }
 
     #[func]
-    fn on_pressed(&self) {
-        godot_print!("Button pressed!");
+    fn remove_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
+        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
+        let value = Some(focused_node);
+        focused_nodes.erase(&value);
+    }
+
+    #[func]
+    fn get_base_control(&mut self) -> Option<Gd<Control>> {
+        let editor_interface_result = self.base_mut().get_editor_interface();
+        if let Some(editor_interface) = editor_interface_result {
+            return editor_interface.get_base_control();
+        }
+        None
+    }
+
+    #[func]
+    fn get_title_bar(&mut self, base_control: Gd<Control>) -> Option<Gd<Control>> {
+        let title_bar_node = base_control.get_child(0).unwrap().get_child(0).unwrap();
+        if let Ok(title_bar) = title_bar_node.try_cast::<Control>() {
+            return Some(title_bar);
+        }
+        None
+    }
+
+    #[func]
+    fn get_title_bar_full(&mut self) -> Option<Gd<Control>> {
+        if let Some(base_control) = self.get_base_control() {
+            return self.get_title_bar(base_control);
+        }
+        None
+    }
+    
+    #[func]
+    fn get_run_bar(&self, title_bar: Gd<Control>) -> Option<Gd<Control>> {
+        if let Ok(run_bar) = title_bar.get_child(4).unwrap().try_cast::<Control>() {
+            return Some(run_bar);
+        }
+        None
+    }
+    
+    #[func]
+    fn get_run_bar_full(&mut self) -> Option<Gd<Control>> {
+        if let Some(base_control) = self.get_base_control() {
+            if let Some(title_bar) = self.get_title_bar(base_control) {
+                return self.get_run_bar(title_bar.clone());
+            }
+        }
+        None
     }
 }
