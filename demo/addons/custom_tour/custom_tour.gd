@@ -31,30 +31,43 @@ func setup():
 	Tour.theater_rect.theme = TheaterTheme
 	Tour.theater_rect.confine_input = true
 	
+	var base_control = Tour.get_base_control()
+	
 	#region Toggle Button
+	
 	var toggle_button_overlay = Panel.new()
 	toggle_button_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Tour.theater_rect.add_child(toggle_button_overlay)
 	
 	var toggle_button_focused_node = Tour.create_focused_node(toggle_button, toggle_button_overlay)
 	Tour.add_focused_node(toggle_button_focused_node)
-	#endregion
-	#region Reset Button
-	var reset_button_overlay = Panel.new()
-	reset_button_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	Tour.theater_rect.add_child(reset_button_overlay)
 	
-	var reset_button_focused_node = Tour.create_focused_node(reset_button, reset_button_overlay)
-	Tour.add_focused_node(reset_button_focused_node)
 	#endregion
 	#region Run Bar
+	
 	var run_bar_overlay = Panel.new()
 	run_bar_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Tour.theater_rect.add_child(run_bar_overlay)
 	
-	var run_bar = Tour.get_run_bar_full()
+	var title_bar = Tour.get_title_bar(base_control)
+	var run_bar = Tour.get_run_bar(title_bar)
 	var run_bar_focused_node = Tour.create_focused_node(run_bar, run_bar_overlay)
 	Tour.add_focused_node(run_bar_focused_node)
+	
+	#endregion
+	#region Scene Tree
+	
+	var scene_tree_overlay = Panel.new()
+	scene_tree_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tour.theater_rect.add_child(scene_tree_overlay)
+	
+	var main_control = Tour.get_main(base_control)
+	var scene_tree_dock = Tour.get_scene_tree_dock(main_control)
+	var scene_tree = scene_tree_dock.find_child("*SceneTreeEditor*", false, false)
+	var scene_tree_focused_node = Tour.create_focused_node(scene_tree, scene_tree_overlay)
+	
+	Tour.add_focused_node(scene_tree_focused_node)
+	
 	#endregion
 
 func clean():
