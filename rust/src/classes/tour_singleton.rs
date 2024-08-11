@@ -167,4 +167,18 @@ impl TourSingleton {
         }
         None
     }
+
+    #[func]
+    pub fn get_scene_tree_dock(&self, main: Gd<Control>) -> Option<Gd<Control>> {
+        let nodes_result = TourSingleton::find_children(main.upcast(), "Scene", "SceneTreeDock", true, false);
+        if let Some(nodes) = nodes_result {
+            let node_result = nodes.get(0); 
+            if let Some(node) = node_result {
+                if let Ok(control) = node.try_cast::<Control>() {
+                    return Some(control);
+                }
+            }
+        }
+        None
+    }
 }
