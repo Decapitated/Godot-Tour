@@ -14,6 +14,8 @@ pub struct TourPlugin {
 impl IEditorPlugin for TourPlugin {
     fn enter_tree(&mut self) {
         if let Some(mut base_control) = self.get_base_control() {
+            self.base().get_viewport().unwrap().connect("gui_focus_changed".into(), self.base().callable("gui_focus_changed"));
+
             let mut tour_singleton = TourPlugin::get_tour_singleton();
             // Make plugin available to singleton.
             tour_singleton.bind_mut().tour_plugin = Some(self.to_gd());
@@ -46,6 +48,29 @@ impl TourPlugin {
             self.tree = TourPlugin::create_tree(Some(base_control.clone()));
             let tree_clone = self.tree.clone();
             self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
+        }
+    }
+
+    #[func]
+    fn gui_focus_changed(&self, control: Option<Gd<Control>>) {
+        let tour_singleton = TourPlugin::get_tour_singleton();
+        if tour_singleton.bind().theater_rect.bind().base().is_visible() {
+            let find_result = tour_singleton.bind().theater_rect.bind().get_focused_nodes().iter_shared().map(|focused_node_result|{
+                if let Some(focused_node) = focused_node_result {
+                    if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
+                        return Some(target);
+                    }
+                }
+                None
+            }).find(|target_result|{
+                if let Some(target) = target_result.clone() {
+                    return target == control.clone().unwrap();
+                }
+                false
+            });
+            if find_result.is_none() {
+                self.base().get_viewport().unwrap().gui_release_focus();
+            }
         }
     }
 
