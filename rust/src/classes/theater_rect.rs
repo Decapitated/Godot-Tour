@@ -115,13 +115,16 @@ impl TheaterRect {
     fn update_overlays(&self) {
         self.focused_nodes.iter_shared().for_each(|focused_node_result| {
             if let Some(focused_node) = focused_node_result {
-                let target_nodepath = focused_node.bind().target.clone();
-                if let Some(target) = self.base().try_get_node_as::<Control>(target_nodepath) {
-                    let overlay_nodepath = focused_node.bind().overlay.clone();
-                    if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
+                let overlay_nodepath = focused_node.bind().overlay.clone();
+                if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
+                    let target_nodepath = focused_node.bind().target.clone();
+                    if let Some(target) = self.base().try_get_node_as::<Control>(target_nodepath) {
+                        overlay.set_visible(target.is_visible());
                         let rect = target.get_global_rect().grow(1.0);
                         overlay.set_position(rect.position);
                         overlay.set_size(rect.size);
+                    } else {
+                        overlay.set_visible(false);
                     }
                 }
             }
@@ -144,28 +147,30 @@ impl TheaterRect {
         self.focused_nodes.iter_shared().map(|focused_node_result|{
             if let Some(focused_node) = focused_node_result {
                 if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
-                    let target_rect = target.get_global_rect();
-                    let overlay_nodepath = focused_node.bind().overlay.clone();
-                    if let Some(overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
-                        if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
-                            if let Ok(flat_stylebox) = stylebox.clone().try_cast::<StyleBoxFlat>() {
-                                return target_rect.grow_individual(
-                                    flat_stylebox.get_expand_margin(Side::LEFT),
-                                    flat_stylebox.get_expand_margin(Side::TOP),
-                                    flat_stylebox.get_expand_margin(Side::RIGHT),
-                                    flat_stylebox.get_expand_margin(Side::BOTTOM),
-                                );
-                            } else if let Ok(texture_stylebox) = stylebox.try_cast::<StyleBoxTexture>() {
-                                return target_rect.grow_individual(
-                                    texture_stylebox.get_expand_margin(Side::LEFT),
-                                    texture_stylebox.get_expand_margin(Side::TOP),
-                                    texture_stylebox.get_expand_margin(Side::RIGHT),
-                                    texture_stylebox.get_expand_margin(Side::BOTTOM),
-                                );
+                    if target.is_visible() {
+                        let target_rect = target.get_global_rect();
+                        let overlay_nodepath = focused_node.bind().overlay.clone();
+                        if let Some(overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
+                            if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
+                                if let Ok(flat_stylebox) = stylebox.clone().try_cast::<StyleBoxFlat>() {
+                                    return target_rect.grow_individual(
+                                        flat_stylebox.get_expand_margin(Side::LEFT),
+                                        flat_stylebox.get_expand_margin(Side::TOP),
+                                        flat_stylebox.get_expand_margin(Side::RIGHT),
+                                        flat_stylebox.get_expand_margin(Side::BOTTOM),
+                                    );
+                                } else if let Ok(texture_stylebox) = stylebox.try_cast::<StyleBoxTexture>() {
+                                    return target_rect.grow_individual(
+                                        texture_stylebox.get_expand_margin(Side::LEFT),
+                                        texture_stylebox.get_expand_margin(Side::TOP),
+                                        texture_stylebox.get_expand_margin(Side::RIGHT),
+                                        texture_stylebox.get_expand_margin(Side::BOTTOM),
+                                    );
+                                }
                             }
                         }
+                        return target_rect;
                     }
-                    return target_rect;
                 }
             }
             Rect2::default()
