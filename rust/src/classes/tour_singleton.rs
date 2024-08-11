@@ -6,9 +6,9 @@ use super::focused_node::FocusedNode;
 use super::theater_rect::TheaterRect;
 use super::tour_plugin::TourPlugin;
 
-/// Singleton for controlling the an editor tour.
 #[derive(GodotClass)]
 #[class(base=Object, rename=Tour)]
+/// Singleton for controlling the an editor tour.
 pub struct TourSingleton {
     base: Base<Object>,
     #[var]
