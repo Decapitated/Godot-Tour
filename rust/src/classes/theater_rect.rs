@@ -83,6 +83,7 @@ impl IControl for TheaterRect {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
                 // Remove material.
                 self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
+                self.base_mut().set_mouse_filter(control::MouseFilter::STOP);
                 // Reset overlays position & size.
                 self.reset_overlays();
             },
