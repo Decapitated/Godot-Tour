@@ -52,6 +52,8 @@ impl TourSingleton {
         None
     }
 
+    //#region Focused Nodes
+
     /// Helper function for creating a focused node resource.
     #[func]
     fn create_focused_node(target: Option<Gd<Control>>, overlay: Option<Gd<Panel>>) -> Gd<FocusedNode> {
@@ -87,6 +89,10 @@ impl TourSingleton {
         focused_nodes.clear();
     }
 
+    //#endregion
+
+    //#region TourPlugin function binds.
+
     /// Get base control of editor window.
     #[func]
     pub fn get_base_control(&self) -> Option<Gd<Control>> {
@@ -113,6 +119,8 @@ impl TourSingleton {
         }
         None
     }
+
+    //#endregion
 
     /// Get run bar control in title bar.
     #[func]
