@@ -25,10 +25,8 @@ impl IEditorPlugin for TourPlugin {
             
             self.tree = Some(Tree::new_alloc());
             let tree_clone = self.tree.clone();
-            self.base_mut().add_control_to_bottom_panel(tree_clone.clone(), "Editor Tree".into());
-            self.create_tree(Some(base_control.clone()));
-
             self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
+            self.create_tree(Some(base_control.clone()));
             
             if let Some(mut title_bar) = self.get_title_bar(base_control) {
                 let mut update_tree_button = Button::new_alloc();
