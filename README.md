@@ -36,3 +36,5 @@ Provides functionality to implement things like UI tours in the Editor & In-Game
 
 ## Notes for development.
 - Attempting to change default resources will cause a multiple bind panic in `gdext`.
+  - Not a problem anymore since we now let the overlay style specify cutout corner radius.
+    Instead of changing the `StyleBoxFlat` corner radius to match a seperate variable.
