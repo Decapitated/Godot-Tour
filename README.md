@@ -34,7 +34,5 @@ Provides functionality to implement things like UI tours in the Editor & In-Game
 - `target` The control to focus on.
 - `overlay` The panel to use as an overlay.
 
-## Notes from development.
-- If the the `Panel` does not have a stylebox override, and you try and change values on it, it will cause an error.
-  - Something about multiple binds which `gdext` will panic on.
-  - So only change values on overridden styleboxes.
+## Notes for development.
+- Attempting to change default resources will cause a multiple bind panic in `gdext`.
