@@ -64,7 +64,8 @@ impl TourPlugin {
                 None
             }).find(|target_result|{
                 if let Some(target) = target_result.clone() {
-                    return target == control.clone().unwrap();
+                    let control = control.clone().unwrap();
+                    return target == control || target.get_global_rect().encloses(control.get_global_rect());
                 }
                 false
             });
