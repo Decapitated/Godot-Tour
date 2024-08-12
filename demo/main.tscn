@@ -167,7 +167,7 @@ text = "Next"
 
 [node name="Example2" type="MarginContainer" parent="TheaterRect/PopupContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
+theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
