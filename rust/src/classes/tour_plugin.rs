@@ -22,8 +22,12 @@ impl IEditorPlugin for TourPlugin {
             // Add TheaterRect to base_control.
             base_control.add_child(tour_singleton.bind().theater_rect.clone());
 
-            self.tree = TourPlugin::create_tree(Some(base_control.clone()));
+            
+            self.tree = Some(Tree::new_alloc());
             let tree_clone = self.tree.clone();
+            self.base_mut().add_control_to_bottom_panel(tree_clone.clone(), "Editor Tree".into());
+            self.create_tree(Some(base_control.clone()));
+
             self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
             
             if let Some(mut title_bar) = self.get_title_bar(base_control) {
@@ -43,11 +47,9 @@ impl TourPlugin {
     #[func]
     fn update_tree(&mut self) {
         if let Some(base_control) = self.get_base_control() {
-            let tree_clone = self.tree.clone();
-            self.base_mut().remove_control_from_bottom_panel(tree_clone);
-            self.tree = TourPlugin::create_tree(Some(base_control.clone()));
-            let tree_clone = self.tree.clone();
-            self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
+            let mut tree = self.tree.clone().unwrap();
+            tree.clear();
+            self.create_tree(Some(base_control.clone()));
         }
     }
 
@@ -75,41 +77,38 @@ impl TourPlugin {
         }
     }
 
-    fn create_tree(control: Option<Gd<Control>>) -> Option<Gd<Tree>> {
+    fn create_tree(&self, control: Option<Gd<Control>>) {
         if let Some(control) = control {
-            let mut tree = Tree::new_alloc();
-            let root = tree.create_item();
+            let root = self.tree.clone().unwrap().create_item();
             if let Some(mut root) = root {
                 root.set_text(0, format!("{:?} -> {:?} = {:?}", control.get_name(), control.get_class(), control).into());
                 root.set_metadata(0, control.to_variant());
                 control.get_children().iter_shared().for_each(|child| {
                     if let Ok(child_control) = child.try_cast::<Control>() {
-                        TourPlugin::create_tree_item(&mut root, &child_control)
+                        TourPlugin::create_tree_item(&mut root, &child_control);
                     }
                 });
             }
-            return Some(tree);
         }
-        None
     }
 
     fn create_tree_item(parent: &mut Gd<TreeItem>, control: &Gd<Control>) {
         let node_item = parent.create_child();
         if let Some(mut node_item) = node_item {
-            let visibility_string = if control.is_visible() { "Visible" } else { "Hidden" };
+            node_item.set_collapsed(true);
             if let Ok(label) = control.clone().try_cast::<Label>() {
-                node_item.set_text(0, format!("({}) {} -> {} = {}", visibility_string, control.get_name(), control.get_class(), label.get_text()).into());
+                node_item.set_text(0, format!("{} -> {} = {}", control.get_name(), control.get_class(), label.get_text()).into());
             } else {
-                node_item.set_text(0, format!("({}) {} -> {}", visibility_string, control.get_name(), control.get_class()).into());
+                node_item.set_text(0, format!("{} -> {}", control.get_name(), control.get_class()).into());
             }
             node_item.set_metadata(0, control.to_variant());
-            if control.is_visible() {
-                control.get_children().iter_shared().for_each(|child| {
-                    if let Ok(child_control) = child.try_cast::<Control>() {
+            control.get_children().iter_shared().for_each(|child| {
+                if let Ok(child_control) = child.try_cast::<Control>() {
+                    if child_control.is_visible() {
                         TourPlugin::create_tree_item(&mut node_item, &child_control)
                     }
-                });
-            }
+                }
+            });
         }
     }
 
