@@ -45,7 +45,7 @@ impl IControl for TheaterRect {
 
     fn process(&mut self, _delta: f64) {
         let mut ret = false;
-        if !self.base().is_visible() {
+        if !self.base().is_visible_in_tree() {
             ret = true;
         } else if self.focused_nodes.is_empty() {
             self.base_mut().set_visible(false);
@@ -120,7 +120,7 @@ impl TheaterRect {
                 if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
                     let target_nodepath = focused_node.bind().target.clone();
                     if let Some(target) = self.base().try_get_node_as::<Control>(target_nodepath) {
-                        overlay.set_visible(target.is_visible());
+                        overlay.set_visible(target.is_visible_in_tree());
                         let rect = target.get_global_rect().grow(1.0);
                         overlay.set_position(rect.position);
                         overlay.set_size(rect.size);
@@ -148,7 +148,7 @@ impl TheaterRect {
         self.focused_nodes.iter_shared().map(|focused_node_result|{
             if let Some(focused_node) = focused_node_result {
                 if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
-                    if target.is_visible() {
+                    if target.is_visible_in_tree() {
                         let target_rect = target.get_global_rect();
                         let overlay_nodepath = focused_node.bind().overlay.clone();
                         if let Some(overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
