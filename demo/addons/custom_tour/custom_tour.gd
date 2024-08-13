@@ -12,7 +12,7 @@ func _enter_tree():
 	toggle_button.pressed.connect(on_toggle_pressed)
 	
 	reset_button = Button.new()
-	reset_button.text = "Reset Tour"
+	reset_button.text = "Start Tour"
 	reset_button.pressed.connect(on_reset_pressed)
 	
 	var title_bar = Tour.get_title_bar_full()
@@ -20,14 +20,14 @@ func _enter_tree():
 	title_bar.move_child(toggle_button, 4)
 	title_bar.add_child(reset_button)
 	title_bar.move_child(reset_button, 4)
-	
-	setup()
 
 func _exit_tree():
 	# Clean-up of the plugin goes here.
 	pass
 	
 func setup():
+	reset_button.text = "Reset Tour"
+	
 	Tour.theater_rect.theme = TheaterTheme
 	Tour.theater_rect.confine_input = true
 	
@@ -97,3 +97,4 @@ func on_toggle_pressed():
 func on_reset_pressed():
 	clean()
 	setup()
+	Tour.theater_rect.visible = true
