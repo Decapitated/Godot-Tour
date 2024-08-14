@@ -32,26 +32,6 @@ impl IObject for TourSingleton {
 
 #[godot_api]
 impl TourSingleton {
-    pub fn find_child(mut node: Gd<Node>, pattern: &str, recursive: bool, owned: bool) -> Option<Gd<Node>> {
-        let find_child_args = array![pattern.to_variant(), recursive.to_variant(), owned.to_variant()];
-        let result = node.callv("find_child".into(), find_child_args);
-        let node_result = result.try_to();
-        if let Ok(node) = node_result {
-            return Some(node);
-        }
-        None
-    }
-
-    pub fn find_children(mut node: Gd<Node>, pattern: &str, node_type: &str, recursive: bool, owned: bool) -> Option<Array<Gd<Node>>> {
-        let find_children_args = array![pattern.to_variant(), node_type.to_variant(), recursive.to_variant(), owned.to_variant()];
-        let result = node.callv("find_children".into(), find_children_args);
-        let node_result = result.try_to();
-        if let Ok(node) = node_result {
-            return Some(node);
-        }
-        None
-    }
-
     //#region Focused Nodes
 
     /// Helper function for creating a focused node resource.
@@ -124,12 +104,15 @@ impl TourSingleton {
 
     /// Get run bar control in title bar.
     #[func]
-    pub fn get_run_bar(&self, title_bar: Gd<Control>) -> Option<Gd<Control>> {
-        if let Some(nodes) = TourSingleton::find_children(title_bar.upcast::<Node>(), "*EditorRunBar*", "EditorRunBar", false, false) {
-            if let Some(node) = nodes.get(0) {
-                if let Ok(run_bar) = node.try_cast::<Control>() {
-                    return Some(run_bar);
-                }
+    pub fn get_run_bar(title_bar: Gd<Control>) -> Option<Gd<Control>> {
+        let title_bar_children = title_bar.find_children_ex("*EditorRunBar*".into())
+            .type_("EditorRunBar".into())
+            .recursive(false)
+            .owned(false)
+            .done();
+        if let Some(node) = title_bar_children.get(0) {
+            if let Ok(run_bar) = node.try_cast::<Control>() {
+                return Some(run_bar);
             }
         }
         None
@@ -139,13 +122,7 @@ impl TourSingleton {
     #[func]
     pub fn get_run_bar_full(&self) -> Option<Gd<Control>> {
         if let Some(title_bar) = self.get_title_bar_full() {
-            if let Some(nodes) = TourSingleton::find_children(title_bar.upcast::<Node>(), "*EditorRunBar*", "EditorRunBar", false, false) {
-                if let Some(node) = nodes.get(0) {
-                    if let Ok(run_bar) = node.try_cast::<Control>() {
-                        return Some(run_bar);
-                    }
-                }
-            }
+            return Self::get_run_bar(title_bar);
         }
         None
     }
@@ -170,13 +147,14 @@ impl TourSingleton {
 
     #[func]
     pub fn get_scene_tree_dock(&self, main: Gd<Control>) -> Option<Gd<Control>> {
-        let nodes_result = TourSingleton::find_children(main.upcast(), "Scene", "SceneTreeDock", true, false);
-        if let Some(nodes) = nodes_result {
-            let node_result = nodes.get(0); 
-            if let Some(node) = node_result {
-                if let Ok(control) = node.try_cast::<Control>() {
-                    return Some(control);
-                }
+        let main_children = main.find_children_ex("Scene".into())
+            .type_("SceneTreeDock".into())
+            .recursive(true)
+            .owned(false)
+            .done();
+        if let Some(node) = main_children.get(0) {
+            if let Ok(control) = node.try_cast::<Control>() {
+                return Some(control);
             }
         }
         None
