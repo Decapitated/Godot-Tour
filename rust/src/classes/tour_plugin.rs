@@ -81,7 +81,8 @@ impl TourPlugin {
             if let Some(mut root) = root {
                 root.set_text(0, format!("{:?} -> {:?} = {:?}", control.get_name(), control.get_class(), control).into());
                 root.set_metadata(0, control.to_variant());
-                control.get_children().iter_shared().for_each(|child| {
+                let control_children = control.get_children_ex().include_internal(true).done();
+                control_children.iter_shared().for_each(|child| {
                     if let Ok(child_control) = child.try_cast::<Control>() {
                         TourPlugin::create_tree_item(&mut root, &child_control);
                     }
@@ -96,15 +97,16 @@ impl TourPlugin {
             node_item.set_collapsed(true);
             if let Ok(label) = control.clone().try_cast::<Label>() {
                 node_item.set_text(0, format!("{} -> {} = {}", control.get_name(), control.get_class(), label.get_text()).into());
+            } else if let Ok(button) = control.clone().try_cast::<Button>()  {
+                node_item.set_text(0, format!("{} -> {} = {}", control.get_name(), control.get_class(), button.get_text()).into());
             } else {
                 node_item.set_text(0, format!("{} -> {}", control.get_name(), control.get_class()).into());
             }
             node_item.set_metadata(0, control.to_variant());
-            control.get_children().iter_shared().for_each(|child| {
+            let control_children = control.get_children_ex().include_internal(true).done();
+            control_children.iter_shared().for_each(|child| {
                 if let Ok(child_control) = child.try_cast::<Control>() {
-                    if child_control.is_visible() {
-                        TourPlugin::create_tree_item(&mut node_item, &child_control)
-                    }
+                    TourPlugin::create_tree_item(&mut node_item, &child_control);
                 }
             });
         }
