@@ -32,7 +32,7 @@ impl IObject for TourSingleton {
 
 #[godot_api]
 impl TourSingleton {
-    //#region Focused Nodes
+    // region: Focused Nodes
 
     /// Helper function for creating a focused node resource.
     #[func]
@@ -66,9 +66,9 @@ impl TourSingleton {
         self.theater_rect.bind_mut().focused_nodes.clear();
     }
 
-    //#endregion
+    // endregion: Focused Nodes
 
-    //#region TourPlugin function binds.
+    // region: TourPlugin function binds
 
     /// Get base control of editor window.
     #[func]
@@ -97,7 +97,7 @@ impl TourSingleton {
         None
     }
 
-    //#endregion
+    // endregion: TourPlugin function binds
 
     /// Get run bar control in title bar.
     #[func]
