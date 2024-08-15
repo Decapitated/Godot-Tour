@@ -98,6 +98,8 @@ impl IControl for TheaterRect {
 
 #[godot_api]
 impl TheaterRect {
+    // The color to use when drawing rect.
+    // Chose transparent red so the user understands there's something wrong.
     const DEFAULT_COLOR: Color = Color::from_rgba(1.0, 0.0, 0.0, 0.75);
 
     fn update(&mut self) {
