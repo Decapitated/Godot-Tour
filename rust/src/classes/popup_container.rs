@@ -46,12 +46,12 @@ struct PopupContainer {
     base: Base<Container>,
     #[export]
     #[var(hint = NODE_PATH_VALID_TYPES, hint_string = "Control")]
-    target: NodePath,
+    pub target: NodePath,
     #[export]
-    position: PopupPosition,
+    pub position: PopupPosition,
     /// Enable smart positioning.
     #[export]
-    smart_position: bool,
+    pub smart_position: bool,
 }
 
 #[godot_api]
