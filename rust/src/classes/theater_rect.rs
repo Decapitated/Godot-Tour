@@ -10,13 +10,13 @@ pub struct TheaterRect {
     base: Base<Control>,
     /// Nodes to focus on.
     #[export]
-    focused_nodes: Array<Option<Gd<FocusedNode>>>,
+    pub focused_nodes: Array<Option<Gd<FocusedNode>>>,
     // Background color of unfocused area.
     #[export]
-    background_color: Color,
+    pub background_color: Color,
     // Prevent mouse input outside of focused area.
     #[export]
-    confine_input: bool,
+    pub confine_input: bool,
     // Cached material.
     cutout_material: Gd<ShaderMaterial>,
 }

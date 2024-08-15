@@ -50,23 +50,20 @@ impl TourSingleton {
     /// Helper function for adding a focused node to the theater_rect.
     #[func]
     fn add_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
-        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
-        focused_nodes.push(Some(focused_node));
+        self.theater_rect.bind_mut().focused_nodes.push(Some(focused_node));
     }
 
     /// Helper function for removing a focused node from the theater_rect.
     #[func]
     fn remove_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
-        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
         let value = Some(focused_node);
-        focused_nodes.erase(&value);
+        self.theater_rect.bind_mut().focused_nodes.erase(&value);
     }
 
     /// Helper function for removing all focused nodes from the theater_rect.
     #[func]
     fn clear_focused_nodes(&mut self) {
-        let mut focused_nodes = self.theater_rect.bind().get_focused_nodes();
-        focused_nodes.clear();
+        self.theater_rect.bind_mut().focused_nodes.clear();
     }
 
     //#endregion
