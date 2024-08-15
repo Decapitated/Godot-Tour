@@ -1,10 +1,11 @@
 # Godot Tour
-A GDExtension built with Rust, using [gdext](https://github.com/godot-rust/gdext).
+<img src="https://img.shields.io/badge/Godot-4.2%2b-blue">
+
+Provides functionality to implement things like UI tours in the Editor & In-Game.
+
+Built using [gdext](https://github.com/godot-rust/gdext).
 
 <img src="docs/images/CompleteOverview.png">
-
-## Description
-Provides functionality to implement things like UI tours in the Editor & In-Game.
 
 ## Available Nodes
 ### `TheaterRect`
@@ -35,8 +36,3 @@ Provides functionality to implement things like UI tours in the Editor & In-Game
 ### `FocusedNode`
 - `target` The control to focus on.
 - `overlay` The panel to use as an overlay.
-
-## Notes for development.
-- Attempting to change default resources will cause a multiple bind panic in `gdext`.
-  - Not a problem anymore since we now let the overlay style specify cutout corner radius.
-    Instead of changing the `StyleBoxFlat` corner radius to match a seperate variable.
