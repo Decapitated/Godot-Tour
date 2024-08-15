@@ -44,15 +44,15 @@ impl IControl for TheaterRect {
     }
 
     fn process(&mut self, _delta: f64) {
-        let mut ret = false;
+        let mut invalid = false;
         if !self.base().is_visible_in_tree() {
-            ret = true;
+            invalid = true;
         } else if self.focused_nodes.is_empty() {
             self.base_mut().set_visible(false);
-            ret = true;
+            invalid = true;
         }
 
-        if ret {
+        if invalid {
             self.base_mut().set_mouse_filter(control::MouseFilter::IGNORE);
             return;
         }
