@@ -31,6 +31,8 @@ func setup():
 	Tour.theater_rect.theme = TheaterTheme
 	Tour.theater_rect.confine_input = true
 	
+	#region Focused Targets
+	
 	var editor_interface = get_editor_interface()
 	
 	var base_control = Tour.get_base_control()
@@ -40,7 +42,11 @@ func setup():
 	
 	var main_control = Tour.get_main(base_control)
 	var scene_tree_dock = Tour.get_scene_tree_dock(main_control)
+	var scene_tree = scene_tree_dock.find_child("*SceneTreeEditor*", false, false)
 	
+	var main_screen = editor_interface.get_editor_main_screen()
+	
+	#endregion	
 	#region Toggle Button
 	
 	var toggle_button_overlay = Panel.new()
@@ -67,9 +73,7 @@ func setup():
 	scene_tree_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Tour.theater_rect.add_child(scene_tree_overlay)
 	
-	var scene_tree = scene_tree_dock.find_child("*SceneTreeEditor*", false, false)
 	var scene_tree_focused_node = Tour.create_focused_node(scene_tree, scene_tree_overlay)
-	
 	Tour.add_focused_node(scene_tree_focused_node)
 	
 	#endregion
@@ -79,9 +83,7 @@ func setup():
 	main_screen_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Tour.theater_rect.add_child(main_screen_overlay)
 	
-	var main_screen = editor_interface.get_editor_main_screen()
 	var main_screen_focused_node = Tour.create_focused_node(main_screen, main_screen_overlay)
-	
 	Tour.add_focused_node(main_screen_focused_node)
 	
 	#endregion
