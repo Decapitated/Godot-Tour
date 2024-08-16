@@ -99,6 +99,8 @@ impl TourSingleton {
 
     // endregion: TourPlugin function binds
 
+    // region: Editor Control helper functions.
+
     /// Get run bar control in title bar.
     #[func]
     pub fn get_run_bar(title_bar: Gd<Control>) -> Option<Gd<Control>> {
@@ -156,4 +158,6 @@ impl TourSingleton {
         }
         None
     }
+
+    // endregion: Editor Control helper functions.
 }

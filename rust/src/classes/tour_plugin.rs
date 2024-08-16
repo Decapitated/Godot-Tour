@@ -21,8 +21,8 @@ impl IEditorPlugin for TourPlugin {
             tour_singleton.bind_mut().tour_plugin = Some(self.to_gd());
             // Add TheaterRect to base_control.
             base_control.add_child(tour_singleton.bind().theater_rect.clone());
-
             
+            // Create Tree control and attach to the bottom panel.
             self.tree = Some(Tree::new_alloc());
             let tree_clone = self.tree.clone();
             self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
@@ -53,9 +53,10 @@ impl TourPlugin {
 
     #[func]
     fn gui_focus_changed(&self, control: Option<Gd<Control>>) {
+        // Prevent user from changing focus to a control outside the focused region.
         let tour_singleton = TourPlugin::get_tour_singleton();
         if tour_singleton.bind().theater_rect.bind().base().is_visible() {
-            let find_result = tour_singleton.bind().theater_rect.bind().get_focused_nodes().iter_shared().map(|focused_node_result|{
+            let find_result = tour_singleton.bind().theater_rect.bind().focused_nodes.iter_shared().map(|focused_node_result|{
                 if let Some(focused_node) = focused_node_result {
                     if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
                         return Some(target);
