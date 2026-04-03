@@ -1,5 +1,5 @@
 # Godot Tour
-<img src="https://img.shields.io/badge/Godot-4.2%2b-blue">
+<img src="https://img.shields.io/badge/Godot-4.6%2b-blue">
 
 Provides functionality to implement things like UI tours in the Editor & In-Game.
 
