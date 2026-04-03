@@ -50,14 +50,14 @@ impl TourSingleton {
     /// Helper function for adding a focused node to the theater_rect.
     #[func]
     fn add_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
-        self.theater_rect.bind_mut().focused_nodes.push(Some(focused_node));
+        self.theater_rect.bind_mut().focused_nodes.push(Some(&focused_node));
     }
 
     /// Helper function for removing a focused node from the theater_rect.
     #[func]
     fn remove_focused_node(&mut self, focused_node: Gd<FocusedNode>) {
-        let value = Some(focused_node);
-        self.theater_rect.bind_mut().focused_nodes.erase(&value);
+        let value = Some(&focused_node);
+        self.theater_rect.bind_mut().focused_nodes.erase(value);
     }
 
     /// Helper function for removing all focused nodes from the theater_rect.
@@ -104,8 +104,8 @@ impl TourSingleton {
     /// Get run bar control in title bar.
     #[func]
     pub fn get_run_bar(title_bar: Gd<Control>) -> Option<Gd<Control>> {
-        let title_bar_children = title_bar.find_children_ex("*EditorRunBar*".into())
-            .type_("EditorRunBar".into())
+        let title_bar_children = title_bar.find_children_ex("*EditorRunBar*")
+            .type_("EditorRunBar")
             .recursive(false)
             .owned(false)
             .done();
@@ -146,8 +146,8 @@ impl TourSingleton {
 
     #[func]
     pub fn get_scene_tree_dock(&self, main: Gd<Control>) -> Option<Gd<Control>> {
-        let main_children = main.find_children_ex("Scene".into())
-            .type_("SceneTreeDock".into())
+        let main_children = main.find_children_ex("Scene")
+            .type_("SceneTreeDock")
             .recursive(true)
             .owned(false)
             .done();

@@ -7,4 +7,4 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-godot = { git = "https://github.com/godot-rust/gdext", branch = "master"}
+godot = { git = "https://github.com/godot-rust/gdext", tag = "v0.5.0" }
