@@ -4,7 +4,7 @@ use godot::classes::{Button, Control, EditorPlugin, IEditorPlugin, Tree, TreeIte
 use super::tour_singleton::TourSingleton;
 
 #[derive(GodotClass)]
-#[class(tool, init, editor_plugin, base=EditorPlugin)]
+#[class(tool, init, base=EditorPlugin)]
 pub struct TourPlugin {
     base: Base<EditorPlugin>,
     tree: Option<Gd<Tree>>,
@@ -14,27 +14,27 @@ pub struct TourPlugin {
 impl IEditorPlugin for TourPlugin {
     fn enter_tree(&mut self) {
         if let Some(mut base_control) = self.get_base_control() {
-            self.base().get_viewport().unwrap().connect("gui_focus_changed".into(), self.base().callable("gui_focus_changed"));
+            self.base().get_viewport().unwrap().connect("gui_focus_changed", &self.base().callable("gui_focus_changed"));
 
             let mut tour_singleton = TourPlugin::get_tour_singleton();
             // Make plugin available to singleton.
             tour_singleton.bind_mut().tour_plugin = Some(self.to_gd());
             // Add TheaterRect to base_control.
-            base_control.add_child(tour_singleton.bind().theater_rect.clone());
+            base_control.add_child(&tour_singleton.bind().theater_rect.clone());
             
             // Create Tree control and attach to the bottom panel.
             self.tree = Some(Tree::new_alloc());
-            let tree_clone = self.tree.clone();
-            self.base_mut().add_control_to_bottom_panel(tree_clone, "Editor Tree".into());
+            let tree_clone = self.tree.clone().unwrap();
+            self.base_mut().add_control_to_bottom_panel(&tree_clone.upcast::<Control>(), "Editor Tree");
             self.create_tree(Some(base_control.clone()));
             
             if let Some(mut title_bar) = self.get_title_bar(base_control) {
                 let mut update_tree_button = Button::new_alloc();
-                update_tree_button.set_text("Update Tree".into());
-                update_tree_button.connect("pressed".into(), self.base().callable("update_tree"));
+                update_tree_button.set_text("Update Tree");
+                update_tree_button.connect("pressed", &self.base().callable("update_tree"));
 
-                title_bar.add_child(update_tree_button.clone());
-                title_bar.move_child(update_tree_button, 4);
+                title_bar.add_child(&update_tree_button.clone());
+                title_bar.move_child(&update_tree_button, 4);
             }
         }
     }
@@ -58,7 +58,7 @@ impl TourPlugin {
         if tour_singleton.bind().theater_rect.bind().base().is_visible() {
             let find_result = tour_singleton.bind().theater_rect.bind().focused_nodes.iter_shared().map(|focused_node_result|{
                 if let Some(focused_node) = focused_node_result {
-                    if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
+                    if let Some(target) = self.base().try_get_node_as::<Control>(&focused_node.bind().target.clone()) {
                         return Some(target);
                     }
                 }
@@ -80,8 +80,8 @@ impl TourPlugin {
         if let Some(control) = control {
             let root = self.tree.clone().unwrap().create_item();
             if let Some(mut root) = root {
-                root.set_text(0, format!("{:?} -> {:?} = {:?}", control.get_name(), control.get_class(), control).into());
-                root.set_metadata(0, control.to_variant());
+                root.set_text(0, &format!("{:?} -> {:?} = {:?}", control.get_name(), control.get_class(), control));
+                root.set_metadata(0, &control.to_variant());
                 let control_children = control.get_children_ex().include_internal(true).done();
                 control_children.iter_shared().for_each(|child| {
                     if let Ok(child_control) = child.try_cast::<Control>() {
@@ -97,13 +97,13 @@ impl TourPlugin {
         if let Some(mut node_item) = node_item {
             node_item.set_collapsed(true);
             if let Ok(label) = control.clone().try_cast::<Label>() {
-                node_item.set_text(0, format!("{} -> {} = {}", control.get_name(), control.get_class(), label.get_text()).into());
+                node_item.set_text(0, &format!("{} -> {} = {}", control.get_name(), control.get_class(), label.get_text()));
             } else if let Ok(button) = control.clone().try_cast::<Button>()  {
-                node_item.set_text(0, format!("{} -> {} = {}", control.get_name(), control.get_class(), button.get_text()).into());
+                node_item.set_text(0, &format!("{} -> {} = {}", control.get_name(), control.get_class(), button.get_text()));
             } else {
-                node_item.set_text(0, format!("{} -> {}", control.get_name(), control.get_class()).into());
+                node_item.set_text(0, &format!("{} -> {}", control.get_name(), control.get_class()));
             }
-            node_item.set_metadata(0, control.to_variant());
+            node_item.set_metadata(0, &control.to_variant());
             let control_children = control.get_children_ex().include_internal(true).done();
             control_children.iter_shared().for_each(|child| {
                 if let Ok(child_control) = child.try_cast::<Control>() {
@@ -114,7 +114,7 @@ impl TourPlugin {
     }
 
     fn get_tour_singleton() -> Gd<TourSingleton> {
-        godot::classes::Engine::singleton().get_singleton(StringName::from("Tour")).unwrap().cast::<TourSingleton>()
+        godot::classes::Engine::singleton().get_singleton(&StringName::from("Tour")).unwrap().cast::<TourSingleton>()
     }
 
     pub fn get_base_control(&mut self) -> Option<Gd<Control>> {

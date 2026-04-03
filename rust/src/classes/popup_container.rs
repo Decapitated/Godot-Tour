@@ -3,9 +3,10 @@ use std::cmp::Ordering;
 use godot::prelude::*;
 use godot::classes::{control, notify, Container, Control, IContainer};
 
-#[derive(GodotConvert, Var, Export)]
+#[derive(GodotConvert, Var, Export, Default, Clone)]
 #[godot(via = i64)]
 enum PopupPosition {
+    #[default]
     TopLeft,
     TopCenter,
     TopRight,
@@ -151,7 +152,7 @@ impl PopupContainer {
     }
 
     fn get_popup_position(&self, position: &PopupPosition) -> Vector2 {
-        if let Some(target) = self.base().try_get_node_as::<Control>(self.target.clone()) {
+        if let Some(target) = self.base().try_get_node_as::<Control>(&self.target) {
             let global_rect = target.get_global_rect();
             let global_center = global_rect.position + (global_rect.size / 2.0);
             let size = self.base().get_size();
@@ -179,7 +180,7 @@ impl PopupContainer {
     }
     
     fn check_popup_position(&self, viewport_rect: Rect2, popup_rect: Rect2) -> Option<f32> {
-        let intersection_option = popup_rect.intersection(viewport_rect);
+        let intersection_option = popup_rect.intersect(viewport_rect);
         if let Some(intersection) = intersection_option {
             return Some(intersection.area());
         }

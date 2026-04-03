@@ -1,6 +1,6 @@
 use godot::prelude::*;
-use godot::builtin::Corner;
-use godot::classes::{control, notify, Control, IControl, Panel, Shader, ShaderMaterial, StyleBoxFlat, StyleBoxTexture};
+use godot::builtin::{Corner, Side};
+use godot::classes::{Control, IControl, Panel, Shader, ShaderMaterial, StyleBoxFlat, StyleBoxTexture, control, notify};
 
 use super::focused_node::FocusedNode;
 
@@ -27,7 +27,7 @@ impl IControl for TheaterRect {
         // Load cutout shader and apply to material.
         let shader = load::<Shader>("res://addons/gdtour/cutout.gdshader");
         let mut material =  ShaderMaterial::new_gd();
-        material.set_shader(shader);
+        material.set_shader(&shader);
         // Set default values.
         Self {
             base,
@@ -40,7 +40,7 @@ impl IControl for TheaterRect {
 
     fn ready(&mut self) {
         let material_clone = self.cutout_material.clone();
-        self.base_mut().set_material(material_clone);
+        self.base_mut().set_material(&material_clone);
     }
 
     fn process(&mut self, _delta: f64) {
@@ -82,14 +82,14 @@ impl IControl for TheaterRect {
         match what {
             notify::ControlNotification::EDITOR_PRE_SAVE => {
                 // Remove material.
-                self.base_mut().set_material(None as Option<Gd<ShaderMaterial>>);
+                self.base_mut().set_material(Gd::null_arg());
                 self.base_mut().set_mouse_filter(control::MouseFilter::STOP);
                 // Reset overlays position & size.
                 self.reset_overlays();
             },
             notify::ControlNotification::EDITOR_POST_SAVE => {
                 let material_clone = self.cutout_material.clone();
-                self.base_mut().set_material(material_clone);
+                self.base_mut().set_material(&material_clone);
             },
             _ => {}
         }
@@ -110,18 +110,18 @@ impl TheaterRect {
     fn update_shader_params(&mut self) {
         let rects = self.get_rects();
         let corners = self.get_corners();
-        self.cutout_material.set_shader_parameter("rects".into(), rects.to_variant());
-        self.cutout_material.set_shader_parameter("corners".into(), corners.to_variant());
-        self.cutout_material.set_shader_parameter("background_color".into(), self.background_color.to_variant());
+        self.cutout_material.set_shader_parameter("rects", &rects.to_variant());
+        self.cutout_material.set_shader_parameter("corners", &corners.to_variant());
+        self.cutout_material.set_shader_parameter("background_color", &self.background_color.to_variant());
     }
 
     fn update_overlays(&self) {
         self.focused_nodes.iter_shared().for_each(|focused_node_result| {
             if let Some(focused_node) = focused_node_result {
                 let overlay_nodepath = focused_node.bind().overlay.clone();
-                if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
+                if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(&overlay_nodepath) {
                     let target_nodepath = focused_node.bind().target.clone();
-                    if let Some(target) = self.base().try_get_node_as::<Control>(target_nodepath) {
+                    if let Some(target) = self.base().try_get_node_as::<Control>(&target_nodepath) {
                         overlay.set_visible(target.is_visible_in_tree());
                         let rect = target.get_global_rect().grow(1.0);
                         overlay.set_position(rect.position);
@@ -138,7 +138,7 @@ impl TheaterRect {
         self.focused_nodes.iter_shared().for_each(|focused_node_result| {
             if let Some(focused_node) = focused_node_result {
                 let overlay_nodepath = focused_node.bind().overlay.clone();
-                if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
+                if let Some(mut overlay) = self.base().try_get_node_as::<Panel>(&overlay_nodepath) {
                     overlay.set_position(Vector2::default());
                     overlay.set_size(Vector2::default());
                 }
@@ -149,12 +149,12 @@ impl TheaterRect {
     fn get_rects(&self) -> Array<Rect2> {
         self.focused_nodes.iter_shared().map(|focused_node_result|{
             if let Some(focused_node) = focused_node_result {
-                if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
+                if let Some(target) = self.base().try_get_node_as::<Control>(&focused_node.bind().target.clone()) {
                     if target.is_visible_in_tree() {
                         let target_rect = target.get_global_rect();
                         let overlay_nodepath = focused_node.bind().overlay.clone();
-                        if let Some(overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
-                            if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
+                        if let Some(overlay) = self.base().try_get_node_as::<Panel>(&overlay_nodepath) {
+                            if let Some(stylebox) = overlay.get_theme_stylebox("panel") {
                                 if let Ok(flat_stylebox) = stylebox.clone().try_cast::<StyleBoxFlat>() {
                                     return target_rect.grow_individual(
                                         flat_stylebox.get_expand_margin(Side::LEFT),
@@ -184,8 +184,8 @@ impl TheaterRect {
         self.focused_nodes.iter_shared().map(|focused_node_result|{
             if let Some(focused_node) = focused_node_result {
                 let overlay_nodepath = focused_node.bind().overlay.clone();
-                if let Some(overlay) = self.base().try_get_node_as::<Panel>(overlay_nodepath) {
-                    if let Some(stylebox) = overlay.get_theme_stylebox("panel".into()) {
+                if let Some(overlay) = self.base().try_get_node_as::<Panel>(&overlay_nodepath) {
+                    if let Some(stylebox) = overlay.get_theme_stylebox("panel") {
                         if let Ok(stylebox_flat) = stylebox.try_cast::<StyleBoxFlat>() {
                             return stylebox_flat.get_corner_radius(Corner::TOP_LEFT) as f32;
                         }
@@ -199,9 +199,9 @@ impl TheaterRect {
     fn has_point(&self, point: Vector2) -> bool {
         for focused_node_result in self.focused_nodes.iter_shared() {
             if let Some(focused_node) = focused_node_result {
-                if let Some(target) = self.base().try_get_node_as::<Control>(focused_node.bind().target.clone()) {
+                if let Some(target) = self.base().try_get_node_as::<Control>(&focused_node.bind().target.clone()) {
                     let target_rect = target.get_global_rect();
-                    if target_rect.has_point(point) {
+                    if target_rect.contains_point(point) {
                         return true;
                     } 
                 }
