@@ -133,19 +133,18 @@ impl PopupContainer {
     fn get_position_smart(&self) -> Vector2 {
         if let Some(viewport) = self.base().get_viewport() {
             let viewport_rect = viewport.get_visible_rect();
+            let preferred_rect = self.get_popup_rect(&self.position);
+            let preferred_area = self.check_popup_position(viewport_rect, preferred_rect);
             let areas = PopupPosition::iterator().map(|position| {
                 let popup_rect = self.get_popup_rect(position);
-                let area = match self.check_popup_position(viewport_rect, popup_rect) {
-                    Some(area) => area,
-                    None => -1.0,
-                };
-                (position, area)
+                let area = self.check_popup_position(viewport_rect, popup_rect);
+                (popup_rect, area)
             });
             let max_area = areas.max_by(|x, y| {
                 x.1.partial_cmp(&y.1).unwrap_or(Ordering::Equal)
             });
-            if let Some((position, _)) = max_area {
-                return self.get_popup_position(position);
+            if let Some((rect, area)) = max_area {
+                return if preferred_area >= area { preferred_rect.position } else { rect.position };
             }
         }
         Vector2::default()
@@ -179,12 +178,12 @@ impl PopupContainer {
         return Rect2::new(popup_position, self.base().get_size());
     }
     
-    fn check_popup_position(&self, viewport_rect: Rect2, popup_rect: Rect2) -> Option<f32> {
+    fn check_popup_position(&self, viewport_rect: Rect2, popup_rect: Rect2) -> f32 {
         let intersection_option = popup_rect.intersect(viewport_rect);
         if let Some(intersection) = intersection_option {
-            return Some(intersection.area());
+            return intersection.area();
         }
-        None
+        -1.0
     }
 
     fn get_child(&self) -> Option<Gd<Control>> {

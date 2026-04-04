@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvrwxwcki5rf0"]
+[gd_scene format=3 uid="uid://cvrwxwcki5rf0"]
 
-[ext_resource type="Script" path="res://Button.gd" id="1_sxr4r"]
+[ext_resource type="Script" uid="uid://cd05baflq5ysq" path="res://Button.gd" id="1_sxr4r"]
 [ext_resource type="Theme" uid="uid://dt4xor4dcglxt" path="res://TheaterRect.theme" id="2_wqa3l"]
 [ext_resource type="Texture2D" uid="uid://buk5q5nw8eioy" path="res://icon.svg" id="3_0f52y"]
 
@@ -28,7 +28,7 @@ corner_radius_bottom_left = 16
 
 [sub_resource type="RichTextEffect" id="RichTextEffect_067e5"]
 
-[node name="Control" type="Control"]
+[node name="Control" type="Control" unique_id=1482441093]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,7 +36,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=974490372]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,23 +45,23 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dhxab")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=295553146]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=822239258]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1872617643]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1939522973]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/default_color = Color(0, 0, 0, 1)
@@ -75,7 +75,7 @@ Donec nisl neque, rutrum vitae augue ut, aliquet suscipit ante. Etiam non ligula
 
 Nulla ac euismod justo. Sed consectetur nisi et consequat porta. In cursus risus sed est volutpat, at eleifend dolor tristique. Pellentesque id eleifend sapien. Cras at tristique lorem. Sed non est suscipit, tincidunt urna nec, malesuada justo. Vestibulum pretium et turpis vitae luctus. Donec ultricies velit nec turpis pretium efficitur."
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="RichTextLabel2" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1113948525]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/default_color = Color(0, 0, 0, 1)
@@ -89,15 +89,15 @@ Donec nisl neque, rutrum vitae augue ut, aliquet suscipit ante. Etiam non ligula
 
 Nulla ac euismod justo. Sed consectetur nisi et consequat porta. In cursus risus sed est volutpat, at eleifend dolor tristique. Pellentesque id eleifend sapien. Cras at tristique lorem. Sed non est suscipit, tincidunt urna nec, malesuada justo. Vestibulum pretium et turpis vitae luctus. Donec ultricies velit nec turpis pretium efficitur."
 
-[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1128201863]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/CenterContainer"]
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/CenterContainer" unique_id=1148565220]
 layout_mode = 2
 text = "Click me!"
 script = ExtResource("1_sxr4r")
 
-[node name="TheaterRect" type="TheaterRect" parent="."]
+[node name="TheaterRect" type="TheaterRect" parent="." unique_id=282171931]
 focused_nodes = Array[FocusedNode]([SubResource("FocusedNode_1nfgq"), SubResource("FocusedNode_fwhtp")])
 layout_mode = 1
 anchors_preset = 15
@@ -108,20 +108,19 @@ grow_vertical = 2
 mouse_default_cursor_shape = 8
 theme = ExtResource("2_wqa3l")
 
-[node name="Overlay" type="Panel" parent="TheaterRect"]
+[node name="Overlay" type="Panel" parent="TheaterRect" unique_id=1130812782]
 layout_mode = 0
 mouse_filter = 2
 
-[node name="Overlay2" type="Panel" parent="TheaterRect"]
+[node name="Overlay2" type="Panel" parent="TheaterRect" unique_id=611588848]
 layout_mode = 0
 mouse_filter = 2
 
-[node name="PopupContainer" type="PopupContainer" parent="TheaterRect"]
+[node name="PopupContainer" type="PopupContainer" parent="TheaterRect" unique_id=410928287]
 target = NodePath("../Overlay")
-position = 2
 layout_mode = 0
 
-[node name="Example1" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+[node name="Example1" type="MarginContainer" parent="TheaterRect/PopupContainer" unique_id=1428373195]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 16
@@ -129,17 +128,17 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example1"]
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example1" unique_id=1284777713]
 custom_minimum_size = Vector2(250, 150)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer" unique_id=2055795174]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer" unique_id=654513446]
 layout_mode = 2
 size_flags_vertical = 3
 text = "This is a popup. It sits next to the provided target."
@@ -147,48 +146,48 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer" unique_id=1856328631]
 layout_mode = 2
 alignment = 1
 
-[node name="Previous" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Previous" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1625710307]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Prev"
 
-[node name="Filler" type="Control" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Filler" type="Control" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer" unique_id=471484942]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Next" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Next" type="Button" parent="TheaterRect/PopupContainer/Example1/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1544822674]
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
 text = "Next"
 
-[node name="Example2" type="MarginContainer" parent="TheaterRect/PopupContainer"]
+[node name="Example2" type="MarginContainer" parent="TheaterRect/PopupContainer" unique_id=1370284687]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example2"]
+[node name="PanelContainer" type="PanelContainer" parent="TheaterRect/PopupContainer/Example2" unique_id=127277268]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_shvdj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example2/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TheaterRect/PopupContainer/Example2/PanelContainer" unique_id=1641223886]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TextureRect" type="TextureRect" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer" unique_id=2003185055]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("3_0f52y")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="TheaterRect/PopupContainer/Example2/PanelContainer/VBoxContainer" unique_id=139975251]
 clip_contents = false
 layout_mode = 2
 bbcode_enabled = true
